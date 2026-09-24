@@ -1,0 +1,11 @@
+// Scanner/sentry bot menu entries, adapted from brutal22test6
+// (Sergeant_Mark_IV's Brutal Doom v22). Appends to "BDExtrasOptionMenu"
+// (menudef.bdextras) rather than editing that file.
+
+AddOptionMenu "BDExtrasOptionMenu"
+{
+	StaticText ""
+	Option "$BDEXTRASMNU_SCANNER", "bd_disablescanner", "OffOn"
+	StaticText ""
+	Slider "$BDEXTRASMNU_SENTRYMAX", "bd_sentrymax", 0.0, 4.0, 1.0
+}

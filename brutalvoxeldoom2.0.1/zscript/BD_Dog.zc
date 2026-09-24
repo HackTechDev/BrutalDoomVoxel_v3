@@ -1,0 +1,77 @@
+//===========================================================================
+//
+// Companion dog deployment, adapted from brutal22test6 (Sergeant_Mark_IV's
+// Brutal Doom v22). The dog actor itself (actors/frienddog.dec) is a close
+// copy; this is new code, since in the original a level designer places the
+// dog in the map and the player switches it on — there's no player-facing
+// "deploy" action to port. Same pattern as zscript/BD_Sentrybot.zc, and
+// relies on that file's BDSentrybotHandler.PlayerSpawned to have already
+// given the player the shared "IsPlayer" marker token.
+//
+//===========================================================================
+
+class BDDogHandler : EventHandler
+{
+	const BD_DOG_COOLDOWN = 350; // 10s between deploys, per player
+
+	int cooldown[8]; // see zscript/BD_Sentrybot.zc for why a fixed small array
+
+	override void WorldTick()
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if (cooldown[i] > 0)
+				cooldown[i]--;
+		}
+	}
+
+	override void NetworkProcess(ConsoleEvent e)
+	{
+		if (e.Name != "BDDeployDog" || e.Player < 0 || !playeringame[e.Player])
+			return;
+
+		PlayerPawn mo = players[e.Player].mo;
+		if (!mo || mo.health <= 0)
+			return;
+
+		if (e.Player < 8 && cooldown[e.Player] > 0)
+			return;
+
+		int maxActive = CVar.GetCVar("bd_dogmax", players[e.Player]).GetInt();
+		if (maxActive <= 0)
+			return;
+
+		if (CountActiveDogs() >= maxActive)
+		{
+			if (e.Player == consoleplayer)
+				Console.Printf(TEXTCOLOR_ORANGE .. "Maximum number of dogs already deployed.");
+			return;
+		}
+
+		Vector3 pos = mo.Pos + (cos(mo.Angle) * 48, sin(mo.Angle) * 48, 0);
+		FCheckPosition tm;
+		tm.thing = mo;
+		mo.CheckPosition(pos.XY, false, tm);
+
+		Actor dog = Actor.Spawn("FriendDog", (pos.X, pos.Y, tm.floorz), NO_REPLACE);
+		if (dog)
+		{
+			dog.Angle = mo.Angle;
+			if (e.Player < 8)
+				cooldown[e.Player] = BD_DOG_COOLDOWN;
+		}
+	}
+
+	static int CountActiveDogs()
+	{
+		int count;
+		ThinkerIterator it = ThinkerIterator.Create("FriendDog");
+		Actor mo;
+		while (mo = Actor(it.Next()))
+		{
+			if (mo.health > 0)
+				count++;
+		}
+		return count;
+	}
+}

@@ -1,0 +1,76 @@
+//===========================================================================
+//
+// Daisy deployment, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal
+// Doom v22). Identical in every way to zscript/BD_Dog.zc except the class
+// name and CVar/event names — see that file's comment for why this exists
+// (no player-facing deploy action in the original) and relies on
+// BDSentrybotHandler.PlayerSpawned (zscript/BD_Sentrybot.zc) for the shared
+// "IsPlayer" marker token.
+//
+//===========================================================================
+
+class BDDaisyHandler : EventHandler
+{
+	const BD_DAISY_COOLDOWN = 350; // 10s between deploys, per player
+
+	int cooldown[8]; // see zscript/BD_Sentrybot.zc for why a fixed small array
+
+	override void WorldTick()
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if (cooldown[i] > 0)
+				cooldown[i]--;
+		}
+	}
+
+	override void NetworkProcess(ConsoleEvent e)
+	{
+		if (e.Name != "BDDeployDaisy" || e.Player < 0 || !playeringame[e.Player])
+			return;
+
+		PlayerPawn mo = players[e.Player].mo;
+		if (!mo || mo.health <= 0)
+			return;
+
+		if (e.Player < 8 && cooldown[e.Player] > 0)
+			return;
+
+		int maxActive = CVar.GetCVar("bd_daisymax", players[e.Player]).GetInt();
+		if (maxActive <= 0)
+			return;
+
+		if (CountActiveDaisies() >= maxActive)
+		{
+			if (e.Player == consoleplayer)
+				Console.Printf(TEXTCOLOR_ORANGE .. "Maximum number of Daisies already deployed.");
+			return;
+		}
+
+		Vector3 pos = mo.Pos + (cos(mo.Angle) * 48, sin(mo.Angle) * 48, 0);
+		FCheckPosition tm;
+		tm.thing = mo;
+		mo.CheckPosition(pos.XY, false, tm);
+
+		Actor daisy = Actor.Spawn("FriendDaisy", (pos.X, pos.Y, tm.floorz), NO_REPLACE);
+		if (daisy)
+		{
+			daisy.Angle = mo.Angle;
+			if (e.Player < 8)
+				cooldown[e.Player] = BD_DAISY_COOLDOWN;
+		}
+	}
+
+	static int CountActiveDaisies()
+	{
+		int count;
+		ThinkerIterator it = ThinkerIterator.Create("FriendDaisy");
+		Actor mo;
+		while (mo = Actor(it.Next()))
+		{
+			if (mo.health > 0)
+				count++;
+		}
+		return count;
+	}
+}

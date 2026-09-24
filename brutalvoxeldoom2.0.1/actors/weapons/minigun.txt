@@ -1,0 +1,287 @@
+ACTOR Minigun : ModWeapon replaces Chaingun
+{
+	Weapon.SelectionOrder 4000
+	Weapon.SlotNumber 4
+	Weapon.AmmoType "MinigunMag"
+	Weapon.AmmoUse 1
+	Weapon.AmmoGive 0
+	Weapon.AmmoType2 "Nato"
+	Weapon.AmmoGive2 50
+	Weapon.UpSound "weapons/minig/equp"
+	Inventory.PickupMessage "You got the Minigun!"
+	Inventory.PickupSound "weapons/minig/pkup"
+	Attacksound "weapons/minig/fire"
+	Tag "Minigun"
+	+WEAPON.NOALERT
+	+WEAPON.AMMO_OPTIONAL
+	States
+	{
+	Select:
+		TNT1 A 0 A_JumpIfInventory("EmptyMini", 1, "EmptySelect")
+		TNT1 A 0 A_PlaySound("weapons/minig/upsnd", CHAN_AUTO)
+		VLCN A 1 A_Raise 
+		TNT1 A 0 A_ZoomFactor(1.00)
+		TNT1 A 1 A_WeaponOffset(54, 81, WOF_INTERPOLATE)
+		VLCN D 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		VLCN B 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		VLCN C 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		VLCN D 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		Goto Ready
+	EmptySelect:
+		CHAG A 1 A_Raise
+		TNT1 A 0 A_ZoomFactor(1.00)
+		TNT1 A 1 A_WeaponOffset(54, 81, WOF_INTERPOLATE)
+		CHAG D 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		CHAG B 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		CHAG C 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		CHAG D 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		Goto Ready
+	Deselect:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_AnimToggle")==1, "DeadSelect")
+		TNT1 A 0 A_JumpIfInventory("EmptyMini", 1, "EmptyDeselect")
+		TNT1 A 0 A_PlaySound("weapons/minig/down", CHAN_AUTO)
+		TNT1 A 0 A_PlaySound("weapons/deselect", CHAN_AUTO)
+		VLCN B 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		VLCN C 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		VLCN D 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		VLCN B 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		VLCN C 1 A_WeaponOffset(54, 100, WOF_INTERPOLATE)
+		VLCN D 1 A_Lower
+		Wait
+	EmptyDeselect:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_AnimToggle")==1, "EmptyDeadSelect")
+		TNT1 A 0 A_PlaySound("weapons/minig/down", CHAN_AUTO)
+		TNT1 A 0 A_PlaySound("weapons/deselect", CHAN_AUTO)
+		CHAG B 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		CHAG C 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		CHAG D 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		CHAG B 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		CHAG C 1 A_WeaponOffset(54, 100, WOF_INTERPOLATE)
+		CHAG D 1 A_Lower
+		Wait
+	DeadSelect:
+		TNT1 A 0 A_JumpIfHealthLower(1, "Dead")
+		Goto Deselect+1
+	EmptyDeadSelect:
+		TNT1 A 0 A_JumpIfHealthLower(1, "Dead")
+		Goto EmptyDeselect+1
+	EmptyDead:
+		TNT1 A 0
+		Goto Anim
+	Dead:
+		TNT1 A 0 A_JumpIfInventory("EmptyMini", 1, "EmptyDead")
+		TNT1 A 0 
+	Anim:
+		GRAB ABCD 2
+		TNT1 A 0 A_FireProjectile("DitchedMG", 0, 0, 0, 13)
+		GRAB EF 2
+		GRAB GHI 3
+		Goto Stopped
+	DeadAnim:
+		GRAB ABCD 2
+		TNT1 A 0 A_FireProjectile("EmptyDitchedMG", 0, 0, 0, 13)
+		GRAB EF 2
+		GRAB GHI 3
+	Stopped:
+		TNT1 A 1
+		Loop
+	Ready:
+		TNT1 A 0 A_JumpIfNoAmmo("EmptyReady")
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		VLCN A 1 A_WeaponReady(WRF_ALLOWRELOAD)
+		Loop
+	EmptyReady:
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_ToggleMinigun")==0, "Reload")
+		CHAG A 1 A_WeaponReady(WRF_ALLOWRELOAD)
+		Loop
+	Fire:
+		TNT1 A 0 A_JumpIfNoAmmo("Reload")
+		TNT1 A 0 A_PlaySound ("weapons/minig/start")
+		VLCN B 2
+		VLCN CD 1
+		VLCN ABCD 1
+		TNT1 A 0 A_Refire
+		VLCN ABCD 1 A_WeaponReady
+		VLCN ABC 2 A_WeaponReady
+		TNT1 A 0 A_PlaySound("weapons/minig/down", CHAN_AUTO)
+		VLCN DABCDAB 3 A_WeaponReady
+		VLCN CD 4 A_WeaponReady
+		Goto Ready
+	Hold:
+		TNT1 A 0 A_JumpIfNoAmmo("EmptyWindDown")
+		TNT1 A 0 A_AlertMonsters
+		TNT1 A 0 A_ZoomFactor(0.995)
+		TNT1 A 0 A_PlaySound("weapons/minig/spin",6)
+		TNT1 A 0 A_GunFlash
+		TNT1 A 0 A_FireBullets (5, 5, 1, 5, "BulletPuff")
+		VLCS A 1 A_WeaponOffset(0,35, WOF_INTERPOLATE)
+		TNT1 A 0 Radius_Quake (1, 2, 0, 1, 0)
+		TNT1 A 0 A_SetPitch(pitch-0.5)
+		VLCS B 1 A_WeaponOffset(0,37, WOF_INTERPOLATE)
+		TNT1 A 0 A_FireProjectile("ChaingunCasingSpawner",0,0,-12,-11)
+		TNT1 A 0 A_GunFlash
+		TNT1 A 0 A_FireBullets (5, 5, 1, 5, "BulletPuff")
+		VLCS C 1 A_WeaponOffset(0,39, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.25)
+		TNT1 A 0 A_FireProjectile("ChaingunCasingSpawner",0,0,-12,-11)
+		VLCS D 1 A_WeaponOffset(0,37, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.25)
+		TNT1 A 0 A_ReFire
+	WindDown:
+		TNT1 A 0 A_JumpIfInventory("MinigunMag", 1, 1)
+		Goto EmptyWindDown
+		TNT1 A 0 A_ClearRefire
+		TNT1 A 0 A_ZoomFactor(1.00)
+		TNT1 A 0 A_PlaySound("weapons/minig/stop",6)
+		TNT1 AAA 0 A_FireProjectile("GunSmokeSpawner", 0, 0, 0, -2)
+		VLCS A 1 A_WeaponOffset(0,35, WOF_INTERPOLATE)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner", 0, 0, 0, -2)
+		VLCS B 1 A_WeaponOffset(0,33, WOF_INTERPOLATE)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner", 0, 0, 0, -2)
+		VLCS CD 1 A_WeaponReady(WRF_NoSwitch)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner", 0, 0, 0, -2)
+		VLCS ABCD 2 A_WeaponReady(WRF_NoSwitch)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner", 0, 0, 0, -2)
+		VLCN ABC 2 A_WeaponReady
+		VLCN DABCDA 3 A_WeaponReady 
+		VLCS BCD 2 A_WeaponReady
+		TNT1 A 0 A_ClearRefire
+		Goto Ready
+	EmptyWindDown:
+		TNT1 A 0 A_GiveInventory("EmptyMini", 1)
+		TNT1 A 0 A_ZoomFactor(1.00)
+		TNT1 A 0 A_PlaySound("weapons/minig/empty")
+		TNT1 A 0 A_PlaySound("weapons/minig/stop",6)
+		TNT1 AAA 0 A_FireProjectile("GunSmokeSpawner", 0, 0, 0, -2)
+		CHAG A 1 A_WeaponOffset(0,35, WOF_INTERPOLATE)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner", 0, 0, 0, -2)
+		CHAG B 1 A_WeaponOffset(0,33, WOF_INTERPOLATE)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner", 0, 0, 0, -2)
+		CHAG CD 1
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner", 0, 0, 0, -2)
+		CHAG ABCD 2
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner", 0, 0, 0, -2)
+		CHAG ABC 2 A_WeaponReady(WRF_NoFire)
+		CHAG DABCD 3 A_WeaponReady(WRF_NoFire)
+		CHAG BCD 2 A_WeaponReady(WRF_NoFire)
+		TNT1 A 0 A_ClearRefire
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_ToggleMinigun")==0, "Reload")
+		Goto Ready
+	Reload:
+		TNT1 A 0 A_JumpIfInventory("EmptyMini", 1, "EmptyReload")
+		TNT1 A 0 A_JumpIfInventory("MinigunMag", 150, 2)
+		TNT1 A 0 A_JumpIfInventory("Nato", 1, "ReloadWork")
+		VLCN A 1 A_WeaponReady
+		Goto Ready
+	EmptyReload:
+		TNT1 A 0 A_JumpIfInventory("MinigunMag", 150, 2)
+		TNT1 A 0 A_JumpIfInventory("Nato", 1, "ReloadWork")
+		CHAG A 1 A_WeaponReady
+		Goto EmptyReady
+	EmptyReloadWork:
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		TNT1 A 0 A_PlaySound("weapons/minig/chain", CHAN_AUTO)
+		NGLD ABCDEEE 1
+		TNT1 A 0 A_PlaySound("weapons/minig/reload")
+		NGLD F 2
+		NGLD GHIJKL 2
+		Goto ReloadLoop
+	ReloadWork:
+		TNT1 A 0 A_JumpIfInventory("EmptyMini", 1, "EmptyReloadWork")
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_ToggleMinigun")==0, "NoReloadLoop")
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		TNT1 A 0 A_PlaySound("weapons/minig/chain", CHAN_AUTO)
+		RCLD ABCDEEE 1
+		TNT1 A 0 A_PlaySound("weapons/minig/reload")
+		RCLD F 2
+		NGLD GHIJKL 2
+	ReloadLoop:
+		TNT1 A 0 A_GiveInventory("MinigunMag")
+		TNT1 A 0 A_TakeInventory("Nato",1,TIF_NOTAKEINFINITE)
+		TNT1 A 0 A_JumpIfInventory("MinigunMag",150,"ReloadEnd")
+		TNT1 A 0 A_JumpIfInventory("Nato",1,"ReloadLoop")
+		Goto ReloadEnd
+	NoReloadLoop:
+		TNT1 A 0 A_GiveInventory("MinigunMag")
+		TNT1 A 0 A_TakeInventory("Nato",1,TIF_NOTAKEINFINITE)
+		TNT1 A 0 A_JumpIfInventory("MinigunMag",150,"NoReloadEnd")
+		TNT1 A 0 A_JumpIfInventory("Nato",1,"NoReloadLoop")
+		Goto NoReloadEnd
+	ReloadEnd:
+		TNT1 A 0 A_TakeInventory("EmptyMini", 1)
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		VLCN BCD 1 A_WeaponReady
+		VLCN ABCDABC 2 A_WeaponReady
+		VLCN DABCD 3 A_WeaponReady
+		Goto Ready
+	NoReloadEnd:
+		TNT1 A 0 A_ReFire
+		Goto Ready
+	EmptyDoPunch:
+		TNT1 A 0 A_PlaySound("weapons/deselect", CHAN_AUTO)
+		TNT1 A 0 A_TakeInventory("Punching",1)
+		CHAG A 1 A_WeaponOffset(-5,35, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-40,52, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-49,75, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-51,90, WOF_INTERPOLATE)
+		TNT1 A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		TNT1 A 0 A_PlaySound("swing")
+		Goto ActualPunch
+	DoPunch:
+		TNT1 A 0 A_JumpIfInventory("EmptyMini", 1, "EmptyDoPunch")
+		TNT1 A 0 A_PlaySound("weapons/deselect", CHAN_AUTO)
+		TNT1 A 0 A_TakeInventory("Punching",1)
+		VLCN A 1 A_WeaponOffset(-5,35, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-40,52, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-49,75, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-51,90, WOF_INTERPOLATE)
+		TNT1 A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		TNT1 A 0 A_PlaySound("swing")
+		Goto ActualPunch
+	PunchDone:
+		TNT1 A 0 A_JumpIfInventory("EmptyMini", 1, "EmptyPunchDone")
+		TNT1 A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-75,69, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-60,60, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-45,52, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(-15,39, WOF_INTERPOLATE)
+		VLCN A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		Goto Ready
+	EmptyPunchDone:
+		TNT1 A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-75,69, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-60,60, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-45,52, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(-15,39, WOF_INTERPOLATE)
+		CHAG A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		Goto Ready
+	Flash:
+		CHAF A 1 Bright A_Light2 
+		CHAF B 1 Bright A_Light1
+		Goto LightDone
+	Spawn:
+		MNIG A -1
+		Stop
+	}
+}
+
+ACTOR EmptyMini : Inventory
+{
+	Inventory.MaxAmount 1
+}
+
+ACTOR SpinnyMini : Inventory
+{
+	Inventory.MaxAmount 1
+}

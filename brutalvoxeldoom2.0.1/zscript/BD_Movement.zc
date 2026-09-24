@@ -1,0 +1,155 @@
+//===========================================================================
+//
+// Sprint and mantling, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal
+// Doom v22). Both are reimplemented from scratch in ZScript rather than
+// ported line-for-line from the original ACS:
+//
+// - Sprint (src/Inputs.acs "CheckSprint") is tied in the original to Brutal
+//   Doom's own player-class system (IsTacticalClass, the Purist class) and
+//   its "UsedStamina" pool, which is really a shared cooldown for melee
+//   kicks and other combat moves this pack doesn't have. This is just the
+//   sprint itself: hold +speed to run faster, limited by a stamina meter
+//   that drains while sprinting and regenerates while not (unless
+//   bd_infinitesprint is on).
+//
+// - Mantling (src/Mantling.acs) in the original spawns a fan of dummy actors
+//   ("EdgeLord") at several distances/heights to find a ledge, then hands
+//   off to a whole animation state machine on a pseudo-weapon (LedgeGrab)
+//   that also guards against a dozen Brutal-Doom-only situations (vehicles,
+//   meat shields, executions, ...) that this pack has no equivalent of.
+//   This keeps just the core: probe once, straight ahead, with
+//   Actor.CheckPosition (a passive query, the player is never moved to
+//   probe), and if a ledge of a climbable height is found, give the player
+//   a velocity nudge so normal movement carries them up onto it — no
+//   teleporting, no weapon-swap animation. Simpler and less precise than
+//   the original (a single probe distance vs. its fan of five), so it may
+//   occasionally miss a ledge the original would catch, but a miss just
+//   means nothing happens (no way for it to move the player into geometry).
+//
+//===========================================================================
+
+class BDSprintPlugin : Inventory
+{
+	double stamina; // 0..100
+
+	Default
+	{
+		Inventory.MaxAmount 1;
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.UNTOSSABLE
+	}
+
+	const BD_SPRINT_SPEED = 1.7;
+	const BD_SPRINT_DRAIN_PER_TIC = 100.0 / (6.0 * 35.0);   // empties in ~6s of sprinting
+	const BD_SPRINT_RECOVER_PER_TIC = 100.0 / (4.0 * 35.0); // refills in ~4s of not sprinting
+
+	override void BeginPlay()
+	{
+		Super.BeginPlay();
+		stamina = 100;
+	}
+
+	override void DoEffect()
+	{
+		Super.DoEffect();
+
+		if (!Owner || !Owner.player)
+			return;
+
+		if (!CVar.GetCVar("bd_enablesprint", Owner.player).GetBool())
+		{
+			Owner.Speed = 1.0;
+			stamina = 100;
+			return;
+		}
+
+		bool infinite = CVar.GetCVar("bd_infinitesprint", Owner.player).GetBool();
+		bool wantsToRun = (Owner.player.cmd.buttons & BT_SPEED) != 0;
+		bool moving = Owner.player.cmd.forwardmove != 0 || Owner.player.cmd.sidemove != 0;
+		bool canRun = wantsToRun && moving && Owner.player.onground
+			&& Owner.player.crouchfactor >= 1.0 && (infinite || stamina > 0);
+
+		if (canRun)
+		{
+			Owner.Speed = BD_SPRINT_SPEED;
+			if (!infinite)
+				stamina = max(0.0, stamina - BD_SPRINT_DRAIN_PER_TIC);
+		}
+		else
+		{
+			Owner.Speed = 1.0;
+			if (stamina < 100.0)
+				stamina = min(100.0, stamina + BD_SPRINT_RECOVER_PER_TIC);
+		}
+	}
+}
+
+class BDMantlePlugin : Inventory
+{
+	int cooldown;
+
+	Default
+	{
+		Inventory.MaxAmount 1;
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.UNTOSSABLE
+	}
+
+	const BD_MANTLE_MINHEIGHT = 28.0;
+	const BD_MANTLE_MAXHEIGHT = 56.0;
+	const BD_MANTLE_PROBEDIST = 20.0;
+	const BD_MANTLE_COOLDOWN = 12; // tics before another attempt, so one nudge finishes first
+
+	override void DoEffect()
+	{
+		Super.DoEffect();
+
+		if (cooldown > 0)
+		{
+			cooldown--;
+			return;
+		}
+
+		if (!Owner || !Owner.player)
+			return;
+
+		if (!CVar.GetCVar("bd_mantling", Owner.player).GetBool())
+			return;
+
+		// only worth trying while airborne, pushing forward, and not still
+		// rocketing upward from a fresh jump
+		if (Owner.player.onground || Owner.player.cmd.forwardmove <= 0 || Owner.Vel.Z > 4.0)
+			return;
+
+		double baseZ = Owner.Pos.Z;
+		Vector2 fwd = AngleToVector(Owner.Angle, 1.0);
+		Vector2 probeXY = Owner.Pos.XY + fwd * BD_MANTLE_PROBEDIST;
+
+		FCheckPosition tm;
+		tm.thing = Owner;
+		Owner.CheckPosition(probeXY, false, tm);
+
+		double ledgeZ = tm.floorz;
+		if (ledgeZ < baseZ + BD_MANTLE_MINHEIGHT || ledgeZ > baseZ + BD_MANTLE_MAXHEIGHT)
+			return;
+		if (tm.ceilingz - ledgeZ < Owner.Height)
+			return;
+
+		Owner.Vel = (fwd.X * 6, fwd.Y * 6, 9);
+		cooldown = BD_MANTLE_COOLDOWN;
+	}
+}
+
+class BDMovementHandler : EventHandler
+{
+	override void PlayerSpawned(PlayerEvent e)
+	{
+		PlayerPawn mo = players[e.PlayerNumber].mo;
+		if (!mo)
+			return;
+		if (!mo.FindInventory("BDSprintPlugin"))
+			mo.GiveInventoryType("BDSprintPlugin");
+		if (!mo.FindInventory("BDMantlePlugin"))
+			mo.GiveInventoryType("BDMantlePlugin");
+	}
+}

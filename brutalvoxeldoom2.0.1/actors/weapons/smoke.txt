@@ -1,0 +1,163 @@
+ACTOR GunSmokeSpawner
+{
+	Speed 17.5
+	+NOCLIP
+	+DONTSPLASH
+	States
+	{
+	Spawn:
+		TNT1 A 1
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		TNT1 AA 0 A_CustomMissile ("GunSmoke", 0, 0, random (0, 360), 2, random (0, 180))
+        Stop
+	}
+}
+
+ACTOR PistolSmokeSpawner : GunSmokeSpawner
+{
+	States
+	{
+	Spawn:
+		TNT1 A 1
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		TNT1 AA 0 A_CustomMissile ("PistolSmoke", 0, 0, random (0, 360), 2, random (0, 180))
+        Stop
+	}
+}
+
+ACTOR CasingSmokeSpawner : GunSmokeSpawner
+{
+	States
+	{
+	Spawn:
+		TNT1 A 1
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		TNT1 AA 0 A_CustomMissile ("CasingSmoke", 0, 0, random (0, 360), 2, random (0, 180))
+        Stop
+	}
+}
+
+ACTOR PumpSmokeSpawner : GunSmokeSpawner
+{
+	Speed 17
+	States
+	{
+	Spawn:
+		TNT1 A 1
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		TNT1 AA 0 A_CustomMissile ("CasingSmoke", 0, 0, random (0, 360), 2, random (0, 180))
+        Stop
+	}
+}
+
+ACTOR GunSmoke
+{
+	+NOGRAVITY
+	+NOBLOCKMAP
+	+FLOORCLIP
+	+FORCEXYBILLBOARD
+	+NOINTERACTION
+	+FORCEXYBILLBOARD
+	+DONTSPLASH
+	+INTERPOLATEANGLES
+	+MISSILE
+	Speed 1
+	RenderStyle Add
+	Alpha		0.06
+	+CLIENTSIDEONLY
+	Radius		0
+	Height		0
+	Scale		0.5
+	States
+	{
+	Spawn:
+		TNT1 A 1
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_SmokeToggle")==0, 12)
+		SMKE ABCDEFGHIJK 1 A_FadeOut(0.005)
+		TNT1 A 0
+		Stop
+	}
+}
+
+ACTOR PistolSmoke : GunSmoke
+{
+	Scale 0.35
+}
+
+ACTOR CasingSmoke : GunSmoke
+{
+	Scale 0.185
+}
+
+
+
+ACTOR ShotSmoke
+{
+	+NOGRAVITY
+	+NOBLOCKMAP
+	+FLOORCLIP
+	+FORCEXYBILLBOARD
+	+CLIENTSIDEONLY
+	+NOINTERACTION
+	+DONTSPLASH
+	+INTERPOLATEANGLES
+	+MISSILE
+	RenderStyle Add
+	Scale  0.25
+	Alpha  0.115
+	Radius 0
+	Height 0
+	Speed  1
+	States
+	{
+    Spawn:
+		TNT1 A 1 A_SetTranslucent(0.1)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_SmokeToggle")==0,19)
+		SMOK ABCDEFGHIJKLMNOPQR 1 A_FadeOut(0.005)
+		TNT1 A 0
+		Stop
+    }
+}
+
+ACTOR CasingSmokes : ShotSmoke
+{
+	XScale 0.04
+	YScale 0.060
+	Alpha 0.08
+	RenderStyle Add
+	States
+	{
+    Spawn:
+		TNT1 A 1 A_SetTranslucent(0.1)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_ShellSmoke")==0,19)
+		SMOK ABCDEFGHIJKLMNOPQR 1 A_FadeOut(0.005)
+		TNT1 A 0
+		Stop
+    }
+}
+
+ACTOR PlasmaSmoke
+{
+	+NOBLOCKMAP
+	+NOGRAVITY
+	+ALLOWPARTICLES
+	+RANDOMIZE
+	RenderStyle Add
+	Alpha 0.2
+	VSpeed 8
+	Mass 5
+	States
+	{
+	Spawn:
+		TNT1 A 1
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_SmokeToggle")==0, 26)
+		SMKE ABCDEFGHIJKLMNOPQRSTUVWXYZ 1 A_FadeOut(0.008)
+		TNT1 A 0
+		Stop
+	}
+}
+
+ACTOR BulletSmoke : PlasmaSmoke
+{
+	Scale 0.35
+}

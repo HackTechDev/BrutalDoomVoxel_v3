@@ -1,0 +1,337 @@
+// Flashlight beam light actors, ported from brutal22test6 (Sergeant_Mark_IV's Brutal
+// Doom v22, actors/flashlight_gz.dec). Cosmetic, self-removing point-light markers;
+// zscript/BD_Flashlight.zc spawns a short-lived chain of these along the player's
+// aim direction each tic. The ten tiers vary only by which GLDEFS PointLight
+// (gldefs.flashlight) they trigger, brighter/bigger towards tier 10. Three colour
+// palettes (White/Warm/Red, cl_bd_flashlightcolor) are added on top of the original,
+// which only had the white set.
+
+Actor FlashLightLight_GZ1
+{
+	+CLIENTSIDEONLY
+	+NOINTERACTION
+
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight1")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ2 : FlashLightLight_GZ1
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight2")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ3 : FlashLightLight_GZ1
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight3")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ4 : FlashLightLight_GZ1
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight4")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ5 : FlashLightLight_GZ1
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight5")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ6 : FlashLightLight_GZ1
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight6")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ7 : FlashLightLight_GZ1
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight7")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ8 : FlashLightLight_GZ1
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight8")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ9 : FlashLightLight_GZ1
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight9")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ10 : FlashLightLight_GZ1
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight10")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ1_Warm
+{
+	+CLIENTSIDEONLY
+	+NOINTERACTION
+
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight1Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ2_Warm : FlashLightLight_GZ1_Warm
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight2Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ3_Warm : FlashLightLight_GZ1_Warm
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight3Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ4_Warm : FlashLightLight_GZ1_Warm
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight4Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ5_Warm : FlashLightLight_GZ1_Warm
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight5Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ6_Warm : FlashLightLight_GZ1_Warm
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight6Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ7_Warm : FlashLightLight_GZ1_Warm
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight7Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ8_Warm : FlashLightLight_GZ1_Warm
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight8Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ9_Warm : FlashLightLight_GZ1_Warm
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight9Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ10_Warm : FlashLightLight_GZ1_Warm
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight10Warm")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ1_Red
+{
+	+CLIENTSIDEONLY
+	+NOINTERACTION
+
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight1Red")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ2_Red : FlashLightLight_GZ1_Red
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight2Red")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ3_Red : FlashLightLight_GZ1_Red
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight3Red")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ4_Red : FlashLightLight_GZ1_Red
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight4Red")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ5_Red : FlashLightLight_GZ1_Red
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight5Red")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ6_Red : FlashLightLight_GZ1_Red
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight6Red")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ7_Red : FlashLightLight_GZ1_Red
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight7Red")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ8_Red : FlashLightLight_GZ1_Red
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight8Red")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ9_Red : FlashLightLight_GZ1_Red
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight9Red")
+			Stop
+	}
+}
+
+Actor FlashLightLight_GZ10_Red : FlashLightLight_GZ1_Red
+{
+	States
+	{
+		Spawn:
+			TNT1 A 2 NoDelay Light("FlashlightLight10Red")
+			Stop
+	}
+}
+
+// Small additive glow shown in front of the player while the flashlight is on
+// (cl_bd_flashlightsource), ported from brutal22test6's FlashlightSource. Uses the
+// "PLFL" sprite (sprites/PLFLA*.png, copied unchanged from brutal22test6).
+Actor BDFlashlightSourceGlow
+{
+	+CLIENTSIDEONLY
+	+NOINTERACTION
+	+NOGRAVITY
+	+NOCLIP
+	RenderStyle "Add"
+	Alpha 0.9
+	XScale 0.5
+	YScale 0.3
+	States
+	{
+	Spawn:
+		PLFL A 2 NoDelay
+		Stop
+	}
+}

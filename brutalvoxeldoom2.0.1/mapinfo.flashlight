@@ -1,0 +1,6 @@
+// Registers the flashlight event handler. Additive: AddEventHandlers appends to
+// the list already declared in mapinfo.lmp, it does not replace it.
+GameInfo
+{
+	AddEventHandlers = "BDFlashlightHandler"
+}

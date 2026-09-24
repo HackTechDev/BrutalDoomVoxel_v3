@@ -1,0 +1,3 @@
+// Companion dog, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22).
+
+user int bd_dogmax = 1; // max dogs deployed at once (0 disables)

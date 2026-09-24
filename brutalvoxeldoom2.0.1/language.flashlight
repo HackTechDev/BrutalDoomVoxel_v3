@@ -1,0 +1,23 @@
+[enu default]
+
+// Flashlight option, ported from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22).
+
+BD_OPTIONS_FLASHLIGHT = "Flashlight";
+OPTMNU_BDFLASHLIGHT = "Flashlight";
+BDFLASHLIGHTMNU_TITLE = "Flashlight Options";
+BDFLASHLIGHTMNU_TYPE = "Flashlight type (self)";
+BDFLASHLIGHTMNU_RANGE = "Beam range";
+BDFLASHLIGHTMNU_INTENSITY = "Beam intensity";
+BDFLASHLIGHTMNU_REBIND = "Rebind flashlight key...";
+BDFLASHLIGHTMNU_OTHERTYPE = "Flashlight type (other players)";
+BDFLASHLIGHTMNU_DISABLEOTHERS = "Show other players' flashlights";
+BDFLASHLIGHTMNU_DISTANCE = "Max. distance (other players)";
+BDFLASHLIGHTMNU_TYPE_SIMPLE = "Simple";
+BDFLASHLIGHTMNU_TYPE_WIDE = "Wide";
+BDFLASHLIGHTMNU_COLOR = "Beam color";
+BDFLASHLIGHTMNU_COLOR_WHITE = "White";
+BDFLASHLIGHTMNU_COLOR_WARM = "Warm";
+BDFLASHLIGHTMNU_COLOR_RED = "Red";
+BDFLASHLIGHTMNU_ALERT = "Alerts nearby monsters while on";
+BDFLASHLIGHTMNU_SOURCE = "Show light source glow";
+BDFLASHLIGHTMNU_BATTERY = "Limited battery";

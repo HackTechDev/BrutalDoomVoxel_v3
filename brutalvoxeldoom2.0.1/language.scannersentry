@@ -1,0 +1,7 @@
+[enu default]
+
+// Scanner/sentry bot, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22).
+
+BDEXTRASMNU_SCANNER = "Show target name/HP under crosshair";
+BDEXTRASMNU_SENTRYMAX = "Max deployed sentry bots";
+BD_SENTRY_DEPLOY = "Deploy Sentry Bot";

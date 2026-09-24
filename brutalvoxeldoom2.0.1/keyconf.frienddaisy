@@ -1,0 +1,7 @@
+// Daisy deploy key, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22).
+// No equivalent key exists in the original (see zscript/BD_Daisy.zc).
+
+addkeysection "Daisy" bddaisyactions
+addmenukey "$BD_DAISY_DEPLOY" bddaisydeploy
+alias bddaisydeploy "netevent BDDeployDaisy"
+defaultbind M bddaisydeploy

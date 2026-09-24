@@ -1,0 +1,28 @@
+// Sentry bot sounds, copied from brutal22test6's SNDINFO.BrutalFriends
+// ("Sentrynotron" block) and sounds/PETS/.
+
+Monsters/Sentry/Walk1     DSSSPWK1
+Monsters/Sentry/Walk2     DSSSPWK2
+Monsters/Sentry/Walk3     DSSSPWK3
+Monsters/Sentry/Walk4     DSSSPWK4
+
+$Random Monsters/Sentry/Walking
+{
+ Monsters/Sentry/Walk1
+ Monsters/Sentry/Walk2
+ Monsters/Sentry/Walk3
+ Monsters/Sentry/Walk4
+}
+
+$Random SentryBotPain { SENTP1 SENTP2 SENTP3 SENTP4 }
+SENTP1 SENTP1
+SENTP2 SENTP2
+SENTP3 SENTP3
+SENTP4 SENTP4
+
+SentrybotDeath SENTD
+
+$Random SentryBotSee { SENSI1 SENSI2 SENSI3 }
+SENSI1 SENSI1
+SENSI2 SENSI2
+SENSI3 SENSI3

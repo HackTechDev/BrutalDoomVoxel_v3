@@ -1,0 +1,85 @@
+//===========================================================================
+//
+// Sentry bot deployment, adapted from brutal22test6 (Sergeant_Mark_IV's
+// Brutal Doom v22). The bot actor itself (actors/sentrybot.dec) is a close
+// copy; this is new code, since in the original a level designer places the
+// bot in the map and the player switches it on — there's no player-facing
+// "deploy" action to port. Netevent-triggered, the same pattern as the
+// flashlight toggle (see zscript/BD_Flashlight.zc).
+//
+//===========================================================================
+
+class BDSentrybotHandler : EventHandler
+{
+	const BD_SENTRY_COOLDOWN = 350; // 10s between deploys, per player
+
+	int cooldown[8]; // indexed by player number; MAXPLAYERS is larger, but a
+	                 // fixed small array keeps this simple and this pack is
+	                 // not built around 8+ player games
+
+	override void PlayerSpawned(PlayerEvent e)
+	{
+		PlayerPawn mo = players[e.PlayerNumber].mo;
+		if (mo && !mo.FindInventory("IsPlayer"))
+			mo.GiveInventoryType("IsPlayer");
+	}
+
+	override void WorldTick()
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if (cooldown[i] > 0)
+				cooldown[i]--;
+		}
+	}
+
+	override void NetworkProcess(ConsoleEvent e)
+	{
+		if (e.Name != "BDDeploySentry" || e.Player < 0 || !playeringame[e.Player])
+			return;
+
+		PlayerPawn mo = players[e.Player].mo;
+		if (!mo || mo.health <= 0)
+			return;
+
+		if (e.Player < 8 && cooldown[e.Player] > 0)
+			return;
+
+		int maxActive = CVar.GetCVar("bd_sentrymax", players[e.Player]).GetInt();
+		if (maxActive <= 0)
+			return;
+
+		if (CountActiveSentries() >= maxActive)
+		{
+			if (e.Player == consoleplayer)
+				Console.Printf(TEXTCOLOR_ORANGE .. "Maximum number of sentry bots already deployed.");
+			return;
+		}
+
+		Vector3 pos = mo.Pos + (cos(mo.Angle) * 48, sin(mo.Angle) * 48, 0);
+		FCheckPosition tm;
+		tm.thing = mo;
+		mo.CheckPosition(pos.XY, false, tm);
+
+		Actor bot = Actor.Spawn("Sentrybot", (pos.X, pos.Y, tm.floorz), NO_REPLACE);
+		if (bot)
+		{
+			bot.Angle = mo.Angle;
+			if (e.Player < 8)
+				cooldown[e.Player] = BD_SENTRY_COOLDOWN;
+		}
+	}
+
+	static int CountActiveSentries()
+	{
+		int count;
+		ThinkerIterator it = ThinkerIterator.Create("Sentrybot");
+		Actor mo;
+		while (mo = Actor(it.Next()))
+		{
+			if (mo.health > 0)
+				count++;
+		}
+		return count;
+	}
+}

@@ -1,0 +1,7 @@
+// Sentry bot deploy key, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal
+// Doom v22). No equivalent key exists in the original (see zscript/BD_Sentrybot.zc).
+
+addkeysection "Sentry Bot" bdsentryactions
+addmenukey "$BD_SENTRY_DEPLOY" bdsentrydeploy
+alias bdsentrydeploy "netevent BDDeploySentry"
+defaultbind B bdsentrydeploy

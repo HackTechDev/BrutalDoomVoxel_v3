@@ -1,0 +1,251 @@
+ACTOR AmmoSpawner : RandomSpawner replaces Clip
+{
+	DropItem Pistol
+	DropItem 9mmAmmo
+	DropItem 9mmAmmo
+	DropItem 9mmAmmo
+	DropItem 9mmAmmo
+	DropItem RifleAmmo
+	DropItem RifleAmmo
+	DropItem RifleAmmo
+	DropItem RifleAmmo
+	DropItem ARifle
+	DropItem ARifle
+}
+ACTOR ChainsawSpawner : RandomSpawner replaces Chainsaw
+{
+	DropItem 9mmAmmo
+	DropItem 9mmAmmo
+	DropItem RifleAmmo
+	DropItem ShellSpawner
+	DropItem ModChainsaw
+}
+//replaces Chainsaw
+ACTOR ShotgunSpawner : RandomSpawner replaces Shotgun
+{
+	DropItem ShellSpawner
+	DropItem ShellSpawner
+	DropItem RiotGun
+	DropItem RiotGun
+	DropItem RiotGun
+	DropItem RiotGun
+}
+ACTOR RifleAmmo : Ammo 
+{
+	Inventory.Amount 15
+	Inventory.MaxAmount 150
+	Ammo.BackpackAmount 30
+	Ammo.BackpackMaxAmount 300
+	Inventory.Icon "CLIPA0"
+	Inventory.PickupMessage "Picked up a rifle magazine."
+	Inventory.PickupSound "weapons/rifle/cout"
+	States
+	{
+	Spawn:
+		CLIP A -1
+		Stop
+	}
+}
+
+ACTOR 9mmAmmo : Ammo
+{
+	Inventory.Amount 5
+	Inventory.MaxAmount 200
+	Ammo.BackpackAmount 20
+	Ammo.BackpackMaxAmount 400
+	Inventory.Icon "CLIPB0"
+	Inventory.PickupSound "items/clip"
+	Inventory.PickupMessage "Picked up a 9mm ammo clip."
+	States
+	{
+	Spawn:
+		CLIP B -1
+		Stop
+	}
+}
+			
+
+ACTOR AmmoBox : RandomSpawner replaces Clipbox
+{
+	DropItem ActualAmmoBox
+	DropItem ActualAmmoBox
+	DropItem ActualAmmoBox
+	DropItem ActualAmmoBox
+	DropItem ActualAmmoBox
+	DropItem ActualAmmoBox
+	DropItem ActualAmmoBox
+	DropItem ActualAmmoBox
+	DropItem ARifle
+	DropItem ARifle
+}
+
+ACTOR ActualAmmoBox : CustomInventory
+{
+	Inventory.PickupSound "items/clipb"
+	Inventory.PickupMessage "Picked up a box of ammo."
+	States
+	{
+	Spawn:
+		AMMO A -1
+		Stop
+	Pickup:
+		TNT1 A 0 A_GiveInventory ("RifleAmmo", 30)
+		TNT1 A 0 A_GiveInventory ("Nato", 75)
+		TNT1 A 0 A_GiveInventory ("9mmAmmo", 45)
+		Stop
+	}
+}
+
+ACTOR Nato : Ammo //Minigun Ammo
+{
+	Inventory.Amount 50
+	Inventory.MaxAmount 150
+	Inventory.Icon "NATOA0"
+	Ammo.BackpackAmount 50
+	Ammo.BackpackMaxAmount 300
+}
+
+ACTOR SingleShell : Shell
+{
+	+DONTSPLASH
+	Inventory.PickupSound "items/shell"
+	Inventory.PickupMessage "Picked up a shotgun shell."
+	Inventory.Amount 1
+	States
+	{
+	Spawn:
+		SHEL D -1
+		Stop
+	}
+}
+
+ACTOR SingleShell2 : Shell
+{
+	+DONTSPLASH
+	Inventory.PickupSound "items/shell"
+	Inventory.PickupMessage "Picked up a shotgun shell."
+	Inventory.Amount 1
+	States
+	{
+	Spawn:
+		SHEL C -1
+		Stop
+	}
+}
+
+ACTOR SingleShell3 : Shell
+{
+	+DONTSPLASH
+	Inventory.PickupSound "items/shell"
+	Inventory.PickupMessage "Picked up a shotgun shell."
+	Inventory.Amount 1
+	States
+	{
+	Spawn:
+		SHEL B -1
+		Stop
+	}
+}
+
+ACTOR SingleShell4 : Shell
+{
+	+DONTSPLASH
+	Inventory.PickupSound "items/shell"
+	Inventory.PickupMessage "Picked up a shotgun shell."
+	Inventory.Amount 1
+	States
+	{
+	Spawn:
+		SHEL E -1
+		Stop
+	}
+}
+
+ACTOR FourShells : Shell
+{
+	Inventory.PickupMessage "$GOTSHELLS"
+	Inventory.Amount 4
+	Inventory.Icon "SHELA0"
+	inventory.pickupsound "items/shell"
+	States
+	{
+	Spawn:
+		SHEL A -1
+		Stop
+	}
+}
+
+ACTOR ShellSpawner replaces Shell
+{
+	-COUNTITEM
+	States
+	{
+	Spawn:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_ShellToggle")==1, 2)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_ShellToggle")==0, "FourSpawn")
+		TNT1 A 0 A_SpawnItem("1ShellSpawn", 0, -15, 0, 0)
+		TNT1 A 1 A_NoBlocking
+		Stop
+	FourSpawn:
+		TNT1 A 0 A_SpawnItem("FourShells")
+		TNT1 A 1 A_NoBlocking
+		Stop
+	}
+}
+
+ACTOR 1ShellSpawn
+{
+	DropItem SingleShell 255
+	DropItem SingleShell2 255
+	DropItem SingleShell3 255
+	DropItem SingleShell4 255
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 1 A_NoBlocking
+		Stop
+	}
+}
+
+ACTOR ShellBox2 : ShellBox replaces ShellBox
+{
+	Inventory.PickupSound "items/sbox"
+}
+
+ACTOR RocketAmmo2 : RocketAmmo replaces RocketAmmo
+{
+	Inventory.PickupSound "items/rocket"
+}
+
+ACTOR RocketBox2 : RocketBox replaces RocketBox
+{
+	Inventory.PickupSound "items/rocketb"
+}
+
+ACTOR Cell2 : Cell replaces Cell
+{
+	Inventory.PickupSound "items/smcell"
+}
+
+ACTOR CellPack2 : CellPack replaces CellPack
+{
+	Inventory.PickupSound "items/cellb"
+}
+
+ACTOR Backpack2 : CustomInventory replaces Backpack
+{
+	Inventory.PickupSound "items/bpack"
+	Inventory.PickupMessage "$GOTBACKPACK"
+	+INVENTORY.NOSCREENFLASH
+	States
+	{
+	Spawn:
+		BPAK A -1
+		Stop
+	Pickup:
+		TNT1 A 0 A_GiveInventory("Backpack", 1)
+		TNT1 A 0 A_SetBlend("Yellow", GetCvar("led_TogBckPck"), 35)
+		Stop
+	}
+}

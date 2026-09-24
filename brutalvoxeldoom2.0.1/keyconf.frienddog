@@ -1,0 +1,7 @@
+// Companion dog deploy key, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal
+// Doom v22). No equivalent key exists in the original (see zscript/BD_Dog.zc).
+
+addkeysection "Companion Dog" bddogactions
+addmenukey "$BD_DOG_DEPLOY" bddogdeploy
+alias bddogdeploy "netevent BDDeployDog"
+defaultbind N bddogdeploy

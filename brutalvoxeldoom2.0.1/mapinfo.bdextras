@@ -1,0 +1,6 @@
+// Registers the sprint/mantling and boss-health handlers. Additive:
+// AddEventHandlers appends to the list already declared in mapinfo.lmp.
+GameInfo
+{
+	AddEventHandlers = "BDMovementHandler", "BDBossHealthHandler"
+}

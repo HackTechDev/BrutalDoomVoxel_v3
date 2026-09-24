@@ -1,0 +1,11 @@
+// Companion dog sounds, copied from brutal22test6's SNDINFO.BrutalFriends and
+// sounds/PETS/.
+
+$random DogAttack { DOGAT1 DOGAT2 }
+DOGAT1 DOGAT1
+DOGAT2 DOGAT2
+DOGAT3 DOGAT3
+DOGAT4 DOGAT4
+
+DogPain DOGPAI
+DogDie DOGDIE

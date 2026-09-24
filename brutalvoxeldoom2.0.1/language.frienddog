@@ -1,0 +1,6 @@
+[enu default]
+
+// Companion dog, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22).
+
+BDEXTRASMNU_DOGMAX = "Max deployed companion dogs";
+BD_DOG_DEPLOY = "Deploy Companion Dog";

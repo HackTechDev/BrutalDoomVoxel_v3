@@ -1,0 +1,83 @@
+//===========================================================================
+//
+// Crosshair target scanner, adapted from brutal22test6 (Sergeant_Mark_IV's
+// Brutal Doom v22, src/SCOUTER.acs). Same technique as
+// zscript/BD_BossHealth.zc: cache the target in WorldTick (play scope),
+// draw it in RenderOverlay (ui scope). The original's "dead enemy" and
+// "kill confirmed" messages were already commented out/disabled in
+// brutal22test6 itself ("Disabled due to popular demand" / "might be too
+// obnoxious") and are left out here too.
+//
+//===========================================================================
+
+class BDScannerHandler : EventHandler
+{
+	Actor tracked;
+	String trackedName;
+	int trackedHealth;
+	int trackedMaxHealth;
+	bool trackedFriendly;
+
+	const BD_SCANNER_RANGE = 2048.0;
+
+	override void WorldTick()
+	{
+		if (consoleplayer < 0 || !playeringame[consoleplayer])
+		{
+			tracked = null;
+			return;
+		}
+
+		PlayerPawn mo = players[consoleplayer].mo;
+		if (!mo || CVar.GetCVar("bd_disablescanner", players[consoleplayer]).GetBool())
+		{
+			tracked = null;
+			return;
+		}
+
+		double viewheight = mo.player ? mo.player.viewheight : mo.Height * 0.85;
+		FLineTraceData trace;
+		bool hit = mo.LineTrace(mo.Angle, BD_SCANNER_RANGE, mo.Pitch, TRF_THRUSPECIES, viewheight, 0, 0, trace);
+		Actor target = hit ? trace.HitActor : null;
+
+		if (!target || !target.bShootable || target.health <= 0)
+		{
+			tracked = null;
+			return;
+		}
+
+		tracked = target;
+		trackedName = target.GetTag();
+		trackedHealth = target.health;
+		trackedMaxHealth = max(1, target.SpawnHealth());
+		trackedFriendly = target.bFriendly;
+	}
+
+	override void RenderOverlay(RenderEvent e)
+	{
+		if (!tracked)
+			return;
+
+		Font small = Font.FindFont('SmallFont');
+		if (!small)
+			return;
+
+		int w = Screen.GetWidth();
+		int y = int(Screen.GetHeight() * 0.60);
+		int lineHeight = small.GetHeight() + 1;
+
+		int pc = trackedHealth * 100 / trackedMaxHealth;
+		int color = pc >= 75 ? Font.CR_TAN : pc >= 50 ? Font.CR_GOLD : pc >= 25 ? Font.CR_ORANGE : Font.CR_RED;
+
+		Screen.DrawText(small, Font.CR_DARKRED, (w - small.StringWidth(trackedName)) / 2, y, trackedName);
+
+		String hp = String.Format("%d / %d", trackedHealth, trackedMaxHealth);
+		Screen.DrawText(small, color, (w - small.StringWidth(hp)) / 2, y + lineHeight, hp);
+
+		if (trackedFriendly)
+		{
+			String f = "-Friendly-";
+			Screen.DrawText(small, Font.CR_GREEN, (w - small.StringWidth(f)) / 2, y + lineHeight * 2, f);
+		}
+	}
+}

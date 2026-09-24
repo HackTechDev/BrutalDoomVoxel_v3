@@ -1,0 +1,20 @@
+// Sprint/mantling/boss-health menu, adapted from brutal22test6
+// (Sergeant_Mark_IV's Brutal Doom v22).
+
+AddOptionMenu "OptionsMenu"
+{
+	StaticText ""
+	Submenu "$OPTMNU_BDEXTRAS", "BDExtrasOptionMenu"
+}
+
+OptionMenu "BDExtrasOptionMenu"
+{
+	Title "$BDEXTRASMNU_TITLE"
+	StaticText ""
+	Option "$BDEXTRASMNU_SPRINT", "bd_enablesprint", "OnOff"
+	Option "$BDEXTRASMNU_INFINITESPRINT", "bd_infinitesprint", "OnOff", "bd_enablesprint"
+	StaticText ""
+	Option "$BDEXTRASMNU_MANTLING", "bd_mantling", "OnOff"
+	StaticText ""
+	Option "$BDEXTRASMNU_BOSSHEALTH", "bd_bosshealthbar", "OnOff"
+}

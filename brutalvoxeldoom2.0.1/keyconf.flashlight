@@ -1,0 +1,6 @@
+// Flashlight key binding, ported from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22).
+
+addkeysection "Flashlight" bdflashlightactions
+addmenukey "$BD_OPTIONS_FLASHLIGHT" bdflashlightswitch
+alias bdflashlightswitch "netevent BDToggleFlashlight"
+defaultbind F bdflashlightswitch

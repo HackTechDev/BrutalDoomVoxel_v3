@@ -1,0 +1,642 @@
+Actor DebrisGeneral
+{
+	+MISSILE
+	+NOBLOCKMAP
+	+NOGRAVITY
+	+DROPOFF
+	+NOTELEPORT
+	+FORCEXYBILLBOARD
+	+NOTDMATCH
+	+GHOST
+	+INTERPOLATEANGLES
+	Radius 1
+	Height 1
+	Mass 1
+	Damage 0
+}
+
+ACTOR SpentClip1
+{ 
+    Scale 0.6
+    Radius 3
+    Height 3
+    Speed 0
+    Mass 5
+    -NOBLOCKMAP +DROPOFF +MISSILE +NOTELEPORT +FLOORCLIP +FORCEXYBILLBOARD +CANBOUNCEWATER
+    DeathSound "weapons/smallclip"
+    States
+    {
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_SpentMagsToggle")==0, "NoSpawn")
+		Goto Draw
+    Draw:
+      TNT1 A 0 A_JumpIf(Waterlevel>2,"NoSpawn")
+      CLP1 C 3
+      Loop
+	NoSpawn:
+	  TNT1 A 0
+	  Stop
+    Death:
+      CLP1 I 1 A_SetTics(CallACS("led_SpentMagLife"))
+      CLP1 I 10 A_FadeOut(0.5)
+      Stop
+    }
+}
+
+ACTOR RifleMagDrop
+{
+	Height 12
+	Radius 9
+	Speed 6
+	Scale 0.65
+	BounceType DOOM
+	BounceCount 3
+	BounceFactor 0.5
+	BounceSound "weapons/largeclip"
+	Projectile
+	-NOGRAVITY
+	+WINDTHRUST
+	+CLIENTSIDEONLY
+	+MOVEWITHSECTOR
+	+MISSILE
+	+NOBLOCKMAP
+	-DROPOFF
+	+NOTELEPORT
+	+FORCEXYBILLBOARD
+	+NOTDMATCH
+	+GHOST
+	+CANBOUNCEWATER
+	+FLOORCLIP
+	+THRUACTORS
+	+ROLLSPRITE
+	+ROLLCENTER
+	Mass 1
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_SpentMagsToggle")==0, "NoSpawn")
+			Goto Draw
+		Draw:
+			ECLI HABCDEF 1 A_JumpIf(Waterlevel>2,"NoSpawn")
+			Loop
+		NoSpawn:
+			TNT1 A 0
+			Stop
+		Death:
+			TNT1 A 0 A_Jump(256,"Death1","Death2","Death3")
+			Goto Death1
+		Death1:
+			ECLI A 1 A_SetTics(CallACS("led_SpentMagLife"))
+			ECLI A 15 A_FadeOut(0.5)
+			Stop
+		Death2:
+			ECLI C 1 A_SetTics(CallACS("led_SpentMagLife"))
+			ECLI C 15 A_FadeOut(0.5)
+			Stop
+		Death3:
+			ECLI G 1 A_SetTics(CallACS("led_SpentMagLife"))
+			ECLI G 15 A_FadeOut(0.5)
+			Stop	
+	}
+}
+
+ACTOR RocketPackDrop : RifleMagDrop
+{
+	Scale 0.65
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_SpentMagsToggle")==0, "NoSpawn")
+			Goto Draw
+		Draw:
+			RCSE BCDEFGH 1 A_JumpIf(Waterlevel>2,"NoSpawn")
+			Loop
+		NoSpawn:
+			TNT1 A 0
+			Stop
+		Death:
+			TNT1 A 0 A_Jump(256,"Death1","Death2","Death3")
+			Goto Death1
+		Death1:
+			RCSE A 1 A_SetTics(CallACS("led_SpentMagLife"))
+			RCSE A 15 A_FadeOut(0.5)
+			Stop
+		Death2:
+			RCSE C 1 A_SetTics(CallACS("led_SpentMagLife"))
+			RCSE C 15 A_FadeOut(0.5)
+			Stop
+		Death3:
+			RCSE G 1 A_SetTics(CallACS("led_SpentMagLife"))
+			RCSE G 15 A_FadeOut(0.5)
+			Stop
+	}
+}
+
+ACTOR PulseCellDrop : RifleMagDrop
+{
+	Scale 0.65
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_SpentMagsToggle")==0, "NoSpawn")
+			Goto Draw
+		Draw:
+			ECEL BCDEFGH 1 A_JumpIf(Waterlevel>2,"NoSpawn")
+			Loop
+		NoSpawn:
+			TNT1 A 0
+			Stop
+		Death:
+			TNT1 A 0 A_Jump(256,"Death1","Death2","Death3")
+			Goto Death1
+		Death1:
+			ECEL A 1 A_SetTics(CallACS("led_SpentMagLife"))
+			ECEL A 15 A_FadeOut(0.5)
+			Stop
+		Death2:
+			ECEL C 1 A_SetTics(CallACS("led_SpentMagLife"))
+			ECEL C 15 A_FadeOut(0.5)
+			Stop
+		Death3:
+			ECEL G 1 A_SetTics(CallACS("led_SpentMagLife"))
+			ECEL G 15 A_FadeOut(0.5)
+			Stop
+	}
+}
+
+ACTOR 9mmCasingSpawner : DebrisGeneral
+{
+	Speed 8
+	+NOINTERACTION
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_CasingsToggle")==0, 3)
+		TNT1 A 1 Thing_ChangeTID(0,390)
+		TNT1 A 0 A_CustomMissile("9mmCasing",0,0,random(-80,-100),2,random(45,80))
+		TNT1 A 0
+		Stop
+	}
+}
+
+ACTOR 9mmCasing
+{
+	Projectile
+	-NOGRAVITY
+	-NOBLOCKMAP
+	+BOUNCEONACTORS
+	+FORCEXYBILLBOARD
+	+ROLLSPRITE
+	+INTERPOLATEANGLES
+	Radius 3
+	Height 3
+	Speed 6
+	Mass 5
+	Scale 0.135
+	BounceFactor 0.25
+	WallBounceFactor 0.1
+	BounceSound "weapons/casing"
+	BounceType Doom
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+		TNT1 A 0 A_Jump(256,1,2,3,4,5,6,7,8)
+		CAS1 ABCDEFGH 1 
+		{
+			A_SpawnItemEx("CasingSmokes",frandom(0.3,0.2),random(0,-1.0),0,0,0,frandom(0.5,0.1),0,SXF_CLIENTSIDE,0);
+			A_SetRoll(random(0, 359), SPF_INTERPOLATE);
+		}
+		Loop
+	Death:
+		TNT1 A 0 A_SetRoll(0)
+		TNT1 A 0 A_jump(256,"death1","death2","death3","death4","death5","death6")
+	Death1:
+		CAS1 I 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS1 I 15 A_FadeOut(0.5)
+		Stop
+	Death2:
+		CAS1 J 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS1 J 15 A_FadeOut(0.5)
+		Stop
+	Death3:
+		CAS1 K 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS1 K 15 A_FadeOut(0.5)
+		Stop
+	Death4:
+		CAS1 L 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS1 L 15 A_FadeOut(0.5)
+		Stop
+	Death5:
+		CAS1 M 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS1 M 15 A_FadeOut(0.5)
+		Stop
+	Death6:
+		CAS1 N 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS1 N 15 A_FadeOut(0.5)
+		Stop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+	}
+}
+
+ACTOR ShotgunCasingSpawner : 9mmCasingSpawner
+{
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_CasingsToggle")==0, 3)
+		TNT1 A 1 Thing_ChangeTID(0,390)
+		TNT1 A 0 A_CustomMissile("ShotgunCasing",0,0,random(-80,-100),2,random(40,60))
+		TNT1 A 0
+		Stop
+	}
+}
+
+ACTOR SSGCasingSpawner : ShotgunCasingSpawner
+{
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_CasingsToggle")==0, 2)
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		TNT1 A 1
+		Goto Death
+	Death:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_CasingsToggle")==0, 2)
+		TNT1 A 0 A_CustomMissile("ShotgunCasing",0,0,random(80,100),2,random(50,70))
+		TNT1 A 0
+		Stop
+	}
+}
+
+ACTOR ShotgunCasing : 9mmCasing
+{ 
+	Scale .175
+	BounceSound "weapons/shotgunshells"
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+		TNT1 A 0 A_Jump(256,1,2,3,4,5,6,7,8)
+		CAS2 ABCDEFGH 1 
+		{
+			A_SpawnItemEx("CasingSmokes",frandom(0.3,0.2),random(0,-1.0),0,0,0,frandom(0.5,0.1),0,SXF_CLIENTSIDE,0);
+			A_SetRoll(random(0, 359), SPF_INTERPOLATE);
+		}
+		Loop
+	Death:
+		TNT1 A 0 A_SetRoll(0)
+		TNT1 A 0 A_jump(256,"death1","death2","death3","death4","death5","death6")
+	Death1:
+		CAS2 I 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS2 I 15 A_FadeOut(0.5)
+		Stop
+	Death2:
+		CAS2 J 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS2 J 15 A_FadeOut(0.5)
+		Stop
+	Death3:
+		CAS2 K 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS2 K 15 A_FadeOut(0.5)
+		Stop
+	Death4:
+		CAS2 L 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS2 L 15 A_FadeOut(0.5)
+		Stop
+	Death5:
+		CAS2 M 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS2 M 15 A_FadeOut(0.5)
+		Stop
+	Death6:
+		CAS2 N 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS2 N 15 A_FadeOut(0.5)
+		Stop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+	}
+}
+
+ACTOR RifleCasingSpawner : DebrisGeneral
+{
+	Speed 10
+	+NOINTERACTION
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_CasingsToggle")==0, 3)
+		TNT1 A 1 Thing_ChangeTID(0,390)
+		TNT1 A 0 A_CustomMissile("RifleCasing",0,0,random(-80,-100),2,random(45,80))
+		TNT1 A 0
+		Stop
+	}
+}
+
+ACTOR RifleCasing : 9mmCasing
+{ 
+	Scale .15
+	BounceSound "chaingun/casing"
+	Speed 6
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+		TNT1 A 0 A_Jump(256,1,2,3,4,5,6,7,8)
+		CAS3 ABCDEFGH 1 
+		{
+			A_SpawnItemEx("CasingSmokes",frandom(0.3,0.2),random(0,-1.0),0,0,0,frandom(0.5,0.1),0,SXF_CLIENTSIDE,0);
+			A_SetRoll(random(0, 359), SPF_INTERPOLATE);
+		}
+		Loop
+	Death:
+		TNT1 A 0 A_SetRoll(0)
+		TNT1 A 0 A_jump(256,"death1","death2","death3","death4","death5","death6")
+	Death1:
+		CAS3 I 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 I 15 A_FadeOut(0.5)
+		Stop
+	Death2:
+		CAS3 J 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 J 15 A_FadeOut(0.5)
+		Stop
+	Death3:
+		CAS3 K 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 K 15 A_FadeOut(0.5)
+		Stop
+	Death4:
+		CAS3 L 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 L 15 A_FadeOut(0.5)
+		Stop
+	Death5:
+		CAS3 M 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 M 15 A_FadeOut(0.5)
+		Stop
+	Death6:
+		CAS3 N 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 N 15 A_FadeOut(0.5)
+		Stop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+	}
+}
+
+ACTOR ChaingunCasingSpawner : 9mmCasingSpawner
+{
+	Speed 12
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_CasingsToggle")==0, 3)
+		TNT1 A 1 Thing_ChangeTID(0,390)
+		TNT1 A 0 A_CustomMissile("ChaingunCasing",-2,0,random(80,100),2,random(40,80))
+		TNT1 A 0
+		Stop
+	}
+}
+
+ACTOR ChaingunCasing : 9mmCasing
+{ 
+	Scale .175
+	BounceSound "chaingun/casing"
+	Speed 3
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+		TNT1 A 0 A_Jump(256,1,2,3,4,5,6,7,8)
+		CAS3 ABCDEFGH 1 
+		{
+			A_SpawnItemEx("CasingSmokes",frandom(0.3,0.2),random(0,-1.0),0,0,0,frandom(0.5,0.1),0,SXF_CLIENTSIDE,0);
+			A_SetRoll(random(0, 359), SPF_INTERPOLATE);
+		}
+		Loop
+	Death:
+		TNT1 A 0 A_SetRoll(0)
+		TNT1 A 0 A_jump(256,"death1","death2","death3","death4","death5","death6")
+	Death1:
+		CAS3 I 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 I 15 A_FadeOut(0.5)
+		Stop
+	Death2:
+		CAS3 J 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 J 15 A_FadeOut(0.5)
+		Stop
+	Death3:
+		CAS3 K 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 K 15 A_FadeOut(0.5)
+		Stop
+	Death4:
+		CAS3 L 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 L 15 A_FadeOut(0.5)
+		Stop
+	Death5:
+		CAS3 M 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 M 15 A_FadeOut(0.5)
+		Stop
+	Death6:
+		CAS3 N 1 A_SetTics(CallACS("led_CasingLife"))
+		CAS3 N 15 A_FadeOut(0.5)
+		Stop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+	}
+}
+
+ACTOR DitchedPistol : RifleMagDrop
+{
+	Scale 0.85
+	BounceSound "weapons/smallclip"
+   States
+{
+   Spawn:
+	TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+      PIST A 1
+	  Loop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+   Death:
+	  PIST A 20
+      PIST A 25 A_FadeOut(0.5)
+      Stop
+   }
+}
+
+ACTOR DitchedShotgun : RifleMagDrop
+{
+	Scale 0.9
+   States
+{
+   Spawn:
+	TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+      RIOB A 1
+	  Loop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+   Death:
+		RIOB A 20
+      RIOB A 25 A_FadeOut(0.5)
+      Stop
+   }
+}
+
+ACTOR DitchedDBSG : RifleMagDrop
+{
+	Scale 0.9
+   States
+{
+   Spawn:
+	TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+      DBBL A 1
+	  Loop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+   Death:
+		DBBL A 20
+      DBBL A 25 A_FadeOut(0.5)
+      Stop
+   }
+}
+
+ACTOR DitchedRifle : RifleMagDrop
+{
+	Scale 0.9
+   States
+{
+   Spawn:
+	TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+      RIFL A 1
+	  Loop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+   Death:
+		RIFL A 20
+      RIFL A 25 A_FadeOut(0.5)
+      Stop
+   }
+}
+
+ACTOR DitchedMG : RifleMagDrop
+{
+	BounceSound "weapons/bfgclip"
+	Scale 1
+   States
+{
+   Spawn:
+	TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+      MNIG A 1
+	  Loop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+   Death:
+		MNIG A 20
+      MNIG A 25 A_FadeOut(0.5)
+      Stop
+   }
+}
+
+ACTOR EmptyDitchedMG : RifleMagDrop
+{
+	BounceSound "weapons/bfgclip"
+	Scale 1
+   States
+{
+   Spawn:
+	TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+      MNIG A 1
+	  Loop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+   Death:
+		MNIG A 20
+      MNIG A 25 A_FadeOut(0.5)
+      Stop
+   }
+}
+
+ACTOR DitchedRL : RifleMagDrop
+{
+	BounceSound "weapons/bfgclip"
+	Scale 0.9
+   States
+{
+   Spawn:
+   TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+      LAWN A 1
+	  Loop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+   Death:
+		LAWN A 20
+      LAWN A 25 A_FadeOut(0.5)
+      Stop
+   }
+}
+
+ACTOR DitchedPLRifle : RifleMagDrop
+{
+	Scale 0.9
+   States
+{
+   Spawn:
+   TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+      PLAS A 1
+	  Loop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+   Death:
+		PLAS A 20
+      PLAS A 25 A_FadeOut(0.5)
+      Stop
+   }
+}
+
+ACTOR DitchedBFG : RifleMagDrop
+{
+	Scale 0.9
+	BounceSound "weapons/bfgclip"
+	BounceFactor 0.25
+   States
+{
+   Spawn:
+   TNT1 A 0 A_JumpIf(Waterlevel>2,"DontSpawn")
+      BFUG A 1
+	  Loop
+	DontSpawn:
+		TNT1 A 0 A_StopSound(2)
+		Stop
+   Death:
+		TNT1 A 0 Radius_Quake(1, 5, 0, 2, 0)
+		BFUG A 20
+      BFUG A 25 A_FadeOut(0.5)
+      Stop
+   }
+}

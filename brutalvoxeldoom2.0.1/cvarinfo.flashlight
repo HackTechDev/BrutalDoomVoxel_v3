@@ -1,0 +1,18 @@
+// Flashlight option, ported from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22).
+// The CVar names are kept identical to the Brutal Doom original for familiarity.
+
+user bool cl_bd_disableflashlight = false;   // hide other players' flashlights
+user int cl_bd_flashlighttype = 1;           // 0 = off, 1 = simple beam, 2 = wide beam
+user int cl_bd_otherflashlighttype = 1;      // same, for other players' flashlights
+user int cl_bd_maxflashlightdistance = 1400; // other players' flashlights: render distance cutoff
+
+// Added on top of the brutal22test6 original (which has no equivalent settings).
+// Range/intensity are viewer-side (how you want to see any flashlight, like the type
+// settings above); alert/source/color/battery are owner-side (how YOUR flashlight
+// behaves and looks to everyone, read from the flashlight's own owner, not the viewer).
+user int cl_bd_flashlightrange = 480;      // viewer: how far the visible beam reaches, in map units
+user int cl_bd_flashlightintensity = 0;    // viewer: shifts the beam's light size/brightness, -4 to 4
+user bool cl_bd_flashlightalert = true;    // owner: alert nearby monsters while the beam is on
+user bool cl_bd_flashlightsource = true;   // owner: show the small glow at the beam's source
+user int cl_bd_flashlightcolor = 0;        // owner: 0 = white, 1 = warm, 2 = red
+user bool cl_bd_flashlightbattery = false; // owner: limited battery instead of always-on

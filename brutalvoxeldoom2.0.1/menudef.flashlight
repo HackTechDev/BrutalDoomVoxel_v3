@@ -1,0 +1,41 @@
+// Flashlight option menu, ported from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22).
+
+AddOptionMenu "OptionsMenu"
+{
+	StaticText ""
+	Submenu "$OPTMNU_BDFLASHLIGHT", "BDFlashlightOptionMenu"
+}
+
+OptionMenu "BDFlashlightOptionMenu"
+{
+	Title "$BDFLASHLIGHTMNU_TITLE"
+	StaticText ""
+	Option "$BDFLASHLIGHTMNU_TYPE", "cl_bd_flashlighttype", "BDFlashlightType"
+	Slider "$BDFLASHLIGHTMNU_RANGE", "cl_bd_flashlightrange", 120.0, 960.0, 60.0
+	Slider "$BDFLASHLIGHTMNU_INTENSITY", "cl_bd_flashlightintensity", -4.0, 4.0, 1.0
+	Option "$BDFLASHLIGHTMNU_COLOR", "cl_bd_flashlightcolor", "BDFlashlightColor"
+	StaticText ""
+	Option "$BDFLASHLIGHTMNU_ALERT", "cl_bd_flashlightalert", "OnOff"
+	Option "$BDFLASHLIGHTMNU_SOURCE", "cl_bd_flashlightsource", "OnOff"
+	Option "$BDFLASHLIGHTMNU_BATTERY", "cl_bd_flashlightbattery", "OnOff"
+	StaticText ""
+	Option "$BDFLASHLIGHTMNU_DISABLEOTHERS", "cl_bd_disableflashlight", "OffOn"
+	Option "$BDFLASHLIGHTMNU_OTHERTYPE", "cl_bd_otherflashlighttype", "BDFlashlightType", "cl_bd_disableflashlight"
+	Slider "$BDFLASHLIGHTMNU_DISTANCE", "cl_bd_maxflashlightdistance", 100.0, 8000.0, 100.0
+	StaticText ""
+	Submenu "$BDFLASHLIGHTMNU_REBIND", "CustomizeControls"
+}
+
+OptionValue "BDFlashlightType"
+{
+	0, "$OPTVAL_OFF"
+	1, "$BDFLASHLIGHTMNU_TYPE_SIMPLE"
+	2, "$BDFLASHLIGHTMNU_TYPE_WIDE"
+}
+
+OptionValue "BDFlashlightColor"
+{
+	0, "$BDFLASHLIGHTMNU_COLOR_WHITE"
+	1, "$BDFLASHLIGHTMNU_COLOR_WARM"
+	2, "$BDFLASHLIGHTMNU_COLOR_RED"
+}

@@ -1,0 +1,114 @@
+ACTOR Knuckle : ModWeapon replaces Fist
+{
+	Weapon.SelectionOrder 1000
+	Weapon.SlotNumber 1
+	Decal None
+	DamageType Melee
+	Weapon.UpSound "weapons/foley"
+	Tag "Brass Knuckle"
+	+WEAPON.WIMPY_WEAPON
+	+WEAPON.NOALERT
+	+WEAPON.MELEEWEAPON
+	States
+	{
+	Select:
+		PKFS A 1 A_Raise
+		TNT1 A 0 A_ZoomFactor(1.00)
+		PKFS A 1 A_WeaponOffset(54, 81, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		Goto Ready
+	Deselect:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_AnimToggle")==1, "DeadSelect")
+		TNT1 A 0 A_TakeInventory("Punching", 1)
+		TNT1 A 0 A_PlaySound("weapons/foley")
+		PKFS A 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(54, 100, WOF_INTERPOLATE)
+		PKFS A 0 A_Lower
+		Wait
+	DeadSelect:
+		TNT1 A 0 A_JumpIfHealthLower(1, "Dead")
+		Goto Deselect+1
+	Dead:
+		GRAB ABCDEF 2
+		GRAB GHI 3
+	Stopped:
+		TNT1 A 1
+		Loop
+	Ready:
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		PKFS A 1 A_WeaponReady
+		Loop
+	Fire:
+	    PKFS A 0 A_JumpIfInventory("DimStrength", 1, "NutsoFire")
+		PKFS A 0 A_JumpIfInventory("PowerStrength", 1, "NutsoFire")
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		PKFS LBC 1 
+		PKFS C 0 A_PlaySound ("weapons/fist/swing", CHAN_WEAPON)
+		PKFS D 1 A_CustomPunch(4,0,0,"FistPuff")
+		PKFS EFGHI 2 
+		PKFS JKL 1 
+		PKFS A 5 A_ReFire
+		Goto Ready
+	NutsoFire:
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		PKFS LBC 1 
+		PKFS C 0 A_PlaySound ("weapons/fist/swing", CHAN_WEAPON)
+		PKFS D 1 A_CustomPunch(40,0,0,"BerserkPuff")
+		PKFS EFGHI 2 
+		PKFS JKL 1 
+		PKFS A 5 A_ReFire
+		Goto Ready
+	DoPunch:
+		TNT1 A 0 A_TakeInventory("Punching",1)
+		PKFS A 1 A_WeaponOffset(-5,35, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-40,52, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-49,75, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-51,90, WOF_INTERPOLATE)
+		TNT1 A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		TNT1 A 0 A_PlaySound("swing")
+		Goto ActualPunch
+	PunchDone:
+		TNT1 A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-75,69, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-60,60, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-45,52, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-15,39, WOF_INTERPOLATE)
+		PKFS A 1 A_WeaponOffset(-1,35, WOF_INTERPOLATE)
+		Goto Ready
+	Spawn:
+		PUNP A -1
+		Stop
+	}
+}
+
+Actor FistPuff
+{
+	+NOBLOCKMAP
+	+NOGRAVITY
+	+PUFFONACTORS
+	+DONTSPLASH
+	-ALLOWPARTICLES
+	+NOEXTREMEDEATH
+	Decal None
+	attacksound "weapons/fist/punch"
+	seesound "weapons/fist/punch"
+}
+
+Actor BerserkPuff : FistPuff
+{
+	-NOEXTREMEDEATH
+	Decal FistScorch
+	attacksound "weapons/fist/strp"
+	seesound "weapons/fist/strp"
+}

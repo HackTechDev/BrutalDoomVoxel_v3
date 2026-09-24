@@ -1,0 +1,190 @@
+// Flashlight point lights, ported from brutal22test6 (Sergeant_Mark_IV's Brutal Doom
+// v22, gldefs.flashlight). Referenced by name from actors/flashlight_gz.dec's
+// Light() calls. Trimmed to the ten PointLights actually used; the original file's
+// FlashlightPuff/FlashlightBeam object+pointlight blocks belonged to a hitscan-puff
+// based flashlight variant that was not ported (see zscript/BD_Flashlight.zc).
+// Warm/Red variants (cl_bd_flashlightcolor) are new, not in the original.
+
+PointLight FlashlightLight1
+{
+	Color 1.0 1.0 1.0
+	Size 20
+}
+
+PointLight FlashlightLight2
+{
+	Color 0.2 0.2 0.2
+	Size 24
+}
+
+PointLight FlashlightLight3
+{
+	Color 0.6 0.6 0.6
+	Size 28
+}
+
+PointLight FlashlightLight4
+{
+	Color 0.3 0.3 0.35
+	Size 32
+}
+
+PointLight FlashlightLight5
+{
+	Color 0.25 0.25 0.3
+	Size 36
+}
+
+PointLight FlashlightLight6
+{
+	Color 1.0 1.0 1.0
+	Size 40
+}
+
+PointLight FlashlightLight7
+{
+	Color 0.2 0.2 0.23
+	Size 44
+}
+
+PointLight FlashlightLight8
+{
+	Color 0.2 0.2 0.23
+	Size 48
+}
+
+PointLight FlashlightLight9
+{
+	Color 0.2 0.2 0.23
+	Size 52
+}
+
+PointLight FlashlightLight10
+{
+	Color 0.2 0.2 0.23
+	Size 56
+}
+
+// Warm palette
+
+PointLight FlashlightLight1Warm
+{
+	Color 1.00 0.95 0.55
+	Size 20
+}
+
+PointLight FlashlightLight2Warm
+{
+	Color 0.23 0.19 0.11
+	Size 24
+}
+
+PointLight FlashlightLight3Warm
+{
+	Color 0.69 0.57 0.33
+	Size 28
+}
+
+PointLight FlashlightLight4Warm
+{
+	Color 0.34 0.28 0.19
+	Size 32
+}
+
+PointLight FlashlightLight5Warm
+{
+	Color 0.29 0.24 0.17
+	Size 36
+}
+
+PointLight FlashlightLight6Warm
+{
+	Color 1.00 0.95 0.55
+	Size 40
+}
+
+PointLight FlashlightLight7Warm
+{
+	Color 0.23 0.19 0.13
+	Size 44
+}
+
+PointLight FlashlightLight8Warm
+{
+	Color 0.23 0.19 0.13
+	Size 48
+}
+
+PointLight FlashlightLight9Warm
+{
+	Color 0.23 0.19 0.13
+	Size 52
+}
+
+PointLight FlashlightLight10Warm
+{
+	Color 0.23 0.19 0.13
+	Size 56
+}
+
+// Red palette
+
+PointLight FlashlightLight1Red
+{
+	Color 1.00 0.15 0.15
+	Size 20
+}
+
+PointLight FlashlightLight2Red
+{
+	Color 0.24 0.03 0.03
+	Size 24
+}
+
+PointLight FlashlightLight3Red
+{
+	Color 0.72 0.09 0.09
+	Size 28
+}
+
+PointLight FlashlightLight4Red
+{
+	Color 0.36 0.04 0.05
+	Size 32
+}
+
+PointLight FlashlightLight5Red
+{
+	Color 0.30 0.04 0.04
+	Size 36
+}
+
+PointLight FlashlightLight6Red
+{
+	Color 1.00 0.15 0.15
+	Size 40
+}
+
+PointLight FlashlightLight7Red
+{
+	Color 0.24 0.03 0.03
+	Size 44
+}
+
+PointLight FlashlightLight8Red
+{
+	Color 0.24 0.03 0.03
+	Size 48
+}
+
+PointLight FlashlightLight9Red
+{
+	Color 0.24 0.03 0.03
+	Size 52
+}
+
+PointLight FlashlightLight10Red
+{
+	Color 0.24 0.03 0.03
+	Size 56
+}

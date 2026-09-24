@@ -1,0 +1,9 @@
+// Daisy menu entry, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal Doom
+// v22). Appends to "BDExtrasOptionMenu" (menudef.bdextras) rather than editing
+// that file.
+
+AddOptionMenu "BDExtrasOptionMenu"
+{
+	StaticText ""
+	Slider "$BDEXTRASMNU_DAISYMAX", "bd_daisymax", 0.0, 4.0, 1.0
+}

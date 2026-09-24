@@ -1,0 +1,11 @@
+[enu default]
+
+// Sprint/mantling/boss-health menu, adapted from brutal22test6
+// (Sergeant_Mark_IV's Brutal Doom v22).
+
+OPTMNU_BDEXTRAS = "Sprint, Mantling, Boss Health";
+BDEXTRASMNU_TITLE = "Sprint / Mantling / Boss Health";
+BDEXTRASMNU_SPRINT = "Sprint (hold +speed while moving)";
+BDEXTRASMNU_INFINITESPRINT = "Infinite sprint stamina";
+BDEXTRASMNU_MANTLING = "Auto climb onto ledges";
+BDEXTRASMNU_BOSSHEALTH = "Show boss health bar";

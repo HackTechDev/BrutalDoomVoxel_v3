@@ -1,0 +1,6 @@
+// Registers the Daisy handler. Additive: AddEventHandlers appends to the
+// list already declared in mapinfo.lmp.
+GameInfo
+{
+	AddEventHandlers = "BDDaisyHandler"
+}

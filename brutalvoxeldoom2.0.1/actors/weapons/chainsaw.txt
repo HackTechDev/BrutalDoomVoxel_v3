@@ -1,0 +1,227 @@
+ACTOR ModChainsaw : ModWeapon 
+{
+	Weapon.SelectionOrder 1500
+	Weapon.SlotNumber 1
+	Decal None
+	Inventory.PickupMessage "A Chainsaw! Find some meat!"
+	Inventory.PickupSound "chainsaw/pkup"
+	Weapon.UpSound "chainsaw/equp"
+	Tag "Chainsaw"
+	+WEAPON.MELEEWEAPON
+	+WEAPON.NOAUTOFIRE
+	+WEAPON.NOALERT
+	States
+	{
+	Select:
+		SAWN A 1 A_Raise
+		TNT1 A 0 A_ZoomFactor(1.00)
+		TNT1 A 1 A_WeaponOffset(54, 100, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		Goto Ready
+	Deselect:
+		TNT1 A 0 A_StopSoundEx("Weapon")
+		TNT1 A 0 A_StopSound(CHAN_6)
+		TNT1 A 0 A_PlaySound("weapons/deselect", CHAN_AUTO)
+		TNT1 A 0 A_TakeInventory("Punching", 1)
+		TNT1 A 0 A_JumpIfInventory("SawOn", 1, 1)
+		Goto ReallyDeselect
+		TNT1 A 0 A_StopSound(CHAN_6)
+		SAWN A 1 A_PlaySound ("weapons/chainsaw/lower", CHAN_AUTO)
+	ReallyDeselect:
+		TNT1 A 0
+		TNT1 A 0 A_TakeInventory("SawOn", 1)
+		SAWN A 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(54, 81, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(67, 100, WOF_INTERPOLATE)
+		SAWN A 1 A_Lower
+		Wait
+	Ready:
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		SAWN A 1 A_WeaponReady
+		Goto Ready
+	ActuallyReady:
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/idle", CHAN_WEAPON, 1, 1)
+		TNT1 A 0 A_FireProjectile("GunSmokeSpawner",0,0,0,-5)
+		SAWN A 4 A_WeaponReady
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		TNT1 A 0 A_FireProjectile("GunSmokeSpawner",0,0,0,-5)
+		SAWN A 4 A_WeaponReady
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		TNT1 A 0 A_FireProjectile("GunSmokeSpawner",0,0,0,-5)
+		SAWN Z 4 A_WeaponReady
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		TNT1 A 0 A_FireProjectile("GunSmokeSpawner",0,0,0,-5)
+		SAWN Z 4 A_WeaponReady
+		Goto ActuallyReady
+	Rev:
+		TNT1 A 0 A_GiveInventory("SawOn", 1)
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		SAWG A 2
+		SAWR A 6
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/zip", CHAN_AUTO)
+		SAWR BCDE 1
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/start", CHAN_WEAPON)
+		TNT1 A 0 A_AlertMonsters
+		SAWR F 3
+		SAWR EDCBA 1
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/stop", 6)
+		SAWG A 1
+		TNT1 A 0 A_ReFire("ActuallyFire")
+		Goto ActuallyReady
+	Fire:
+		TNT1 A 0 A_JumpIfInventory("SawOn", 1, "ActuallyFire")
+		Goto Rev
+	Altfire:
+		TNT1 A 0 A_JumpIfInventory("SawOn", 1, "TurnOff")
+		Goto Ready
+	TurnOff:
+		TNT1 A 0 A_TakeInventory("SawOn", 1)
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		SAWG A 2 
+		SAWR A 2 
+		SAWR A 1 A_WeaponOffset(0, 34, WOF_INTERPOLATE)
+		SAWR A 1 A_WeaponOffset(0, 36, WOF_INTERPOLATE)
+		SAWR A 1 A_WeaponOffset(0, 35, WOF_INTERPOLATE)
+		SAWR A 1 A_WeaponOffset(0, 33, WOF_INTERPOLATE)
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/off")
+		SAWR A 3 A_WeaponOffset(0, 32, WOF_INTERPOLATE)
+		SAWG A 1 
+		TNT1 A 0 A_StopSoundEx("Weapon")
+		TNT1 A 0 A_StopSound(CHAN_6)
+		TNT1 A 0 A_PlayWeaponSound("weapons/chainsaw/lower")
+		Goto Ready
+	ActuallyFire:
+		TNT1 A 0 A_StopSoundEx("Weapon")
+		TNT1 A 0 A_StopSound(CHAN_6)
+		TNT1 A 0 A_PlayWeaponSound("weapons/chainsaw/start")
+		SAWN B 1 
+		SAWN C 1 
+		SAWN D 1 
+		SAWN E 1 
+		SAWN F 1 
+		SAWN G 1 
+		TNT1 A 0 A_AlertMonsters
+	Hold:
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/loop", CHAN_WEAPON, 1, 1)
+		TNT1 A 0 A_FireProjectile("GunSmokeSpawner",0,0,0,-5)
+		SAWF A 1 A_WeaponOffset(1,33, WOF_INTERPOLATE)
+		TNT1 A 0 A_Saw("","saw/flesh",3,"ChainsawPuffSpawner", 8)
+		SAWF B 1 A_WeaponOffset(0,34, WOF_INTERPOLATE)
+		SAWF A 1 A_WeaponOffset(2,32, WOF_INTERPOLATE)
+		SAWF B 1 A_WeaponOffset(-1,33, WOF_INTERPOLATE)
+		TNT1 A 0 A_Refire("Hold")
+		TNT1 A 0 A_StopSoundEx("Weapon")
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/stop", 6)
+		SAWN G 1 A_WeaponReady
+		SAWN F 1 A_WeaponReady
+		SAWN E 1 A_WeaponReady
+		SAWN D 1 A_WeaponReady
+		SAWN B 1 A_WeaponReady
+		Goto ActuallyReady
+	DoPunch:
+		TNT1 A 0 A_TakeInventory("Punching",1)
+		SAWN A 1 A_WeaponOffset(-5,35, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-40,52, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-49,75, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-51,90, WOF_INTERPOLATE)
+		TNT1 A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		TNT1 A 0 A_PlaySound("swing")
+		Goto ActualPunch
+	PunchDone:
+		TNT1 A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-75,69, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-60,60, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-45,52, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-15,39, WOF_INTERPOLATE)
+		SAWN A 1 A_WeaponOffset(-1,35, WOF_INTERPOLATE)
+		TNT1 A 0 A_JumpIfInventory("SawOn", 1, "ActuallyReady")
+		Goto Ready
+	Spawn:
+		CSAW A -1
+		Stop
+	}
+}
+
+Actor SawOn : Inventory 
+{
+	Inventory.MaxAmount 1
+}
+
+Actor ChainsawPuffSpawner
+{
+	+DONTSPLASH
+	+NOGRAVITY
+	+NOINTERACTION
+	Decal ChainsawMark
+	DamageType "Saw"
+	States
+	{
+	Spawn:
+		TNT1 A 0 
+		TNT1 A 0 A_SpawnItem("ChainsawPuff",0,-14)
+		Stop
+	}
+}
+
+Actor ChainsawPuff
+{
+	+DONTSPLASH
+	Scale 0.15
+	Alpha 0.6
+	SeeSound "saw/flesh"
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_SpawnItem("RicochetSaw")
+		PUFF ABCD 1 bright
+		TNT1 A 0
+		Stop
+	}
+}
+
+Actor RicochetSaw
+{
+	+DONTSPLASH
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/hitwall")
+		TNT1 AAAAAAAA 0 A_CustomMissile("RicochetSpark",0,0,random(0,360),2,random(10,60))
+		Stop
+	}
+}
+
+Actor RicochetSpark
+{
+	-DOOMBOUNCE
+	-NOGRAVITY
+	+DONTSPLASH
+	RenderStyle ADD
+	Alpha 1.0
+	Speed 10
+	Radius 3
+	Height 3
+	Scale .03
+	Gravity 1.0
+	States
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 Thing_ChangeTID(0,390)
+		SPRK ABCD 1 bright A_FadeOut(0.05)
+		Loop
+	}
+}

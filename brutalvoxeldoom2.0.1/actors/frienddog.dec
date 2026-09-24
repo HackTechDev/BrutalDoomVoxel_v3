@@ -1,0 +1,170 @@
+// Companion dog, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22,
+// actors/Dog.dec). Same treatment as actors/sentrybot.dec, which this reuses the
+// TargetIsAMarine/IsPlayer marker tokens from: in the original it's a map decoration
+// ("Replaces MarineFist") a level designer places and switches on; here
+// zscript/BD_Dog.zc lets the player deploy one directly (bd_dogmax), so the
+// "FriendDog_Guarding" variant and its Activation/+USESPECIAL wiring aren't needed.
+// Also dropped: the "GiveAmmo" state (already dead code in the original — its only
+// caller was commented out), the retreat-from-tough-monsters AI (needs four more
+// marker tokens plus code elsewhere in brutal22test6 that tags specific bosses with
+// them), and the floating "-Stay-" order text (cosmetic, needs OrderTitle2).
+// Kept: the melee bite attack and the FRIENDLY-flag juggling that makes it fight
+// monsters but never the player or itself.
+
+Actor FriendDog : SwitchableDecoration
+{
+	Scale 1.1
+	Health 200
+	Radius 16
+	Height 24
+	Mass 400
+	MaxTargetRange 1000
+	Speed 4
+	FastSpeed 20
+	PainChance 250
+	Species "Marines"
+	MONSTER
+	+QUICKTORETALIATE
+	+LOOKALLAROUND
+	+PUSHABLE
+	+SLIDESONWALLS
+	+FLOORCLIP
+	-FASTER
+	+MTHRUSPECIES
+	+THRUSPECIES
+	+DONTHURTSPECIES
+	+NOBLOCKMONST
+	-COUNTKILL
+	+THRUACTORS
+	DamageType "Eat"
+	Damage 6
+	MaxStepHeight 48
+	MaxDropOffHeight 48
+	MeleeDamage 4
+	States
+	{
+	Spawn:
+		DOGW A 1
+		TNT1 A 0 A_GiveInventory("TargetIsAMarine") // stops it attacking sentries/other dogs
+		DOGW A 1 A_Look
+		Loop
+
+	ForgetTarget:
+		TNT1 A 0 A_ClearTarget
+		Goto See
+
+	Idle:
+	See:
+		TNT1 A 0
+		TNT1 A 0 A_ChangeFlag("NODROPOFF", 0)
+		TNT1 A 0 A_ChangeFlag("FRIENDLY", 1)
+		TNT1 A 0 A_JumpIfInTargetInventory("TargetIsAMarine", 1, "FollowPlayer")
+		TNT1 A 0 A_ChangeFlag("MISSILEMORE", 1)
+		TNT1 A 0 A_ChangeFlag("MISSILEEVENMORE", 1)
+		TNT1 A 0 A_Recoil(-1)
+		DOGW AA 1 A_Chase
+		TNT1 A 0 A_ChangeFlag("FASTER", 0)
+		TNT1 A 0 A_Recoil(-1)
+		TNT1 A 0 A_JumpIfInTargetInventory("IsPlayer", 1, "FollowPlayer")
+		TNT1 A 0 A_JumpIfInTargetInventory("TargetIsAMarine", 1, "FollowPlayer")
+		DOGW BB 1 A_Chase
+		TNT1 A 0 A_Recoil(-1)
+		TNT1 A 0 A_JumpIfInTargetInventory("TargetIsAMarine", 1, "FollowPlayer")
+		DOGW CC 1 A_Chase
+		TNT1 A 0 A_ChangeFlag("FRIENDLY", 0)
+		TNT1 A 0 A_Recoil(-1)
+		TNT1 A 0 A_JumpIfInTargetInventory("TargetIsAMarine", 1, "FollowPlayer")
+		DOGW DD 1 A_Chase
+		TNT1 A 0 A_ChangeFlag("FRIENDLY", 1)
+		TNT1 A 0 A_Recoil(-1)
+		TNT1 A 0 A_CheckSight("ForgetTarget")
+		TNT1 A 0 A_JumpIfInTargetInventory("TargetIsAMarine", 1, "FollowPlayer")
+		TNT1 A 0 A_CheckSight("FollowPlayer")
+		TNT1 A 0 A_ChangeFlag("FRIENDLY", 0)
+		TNT1 A 0 A_ChangeFlag("SHOOTABLE", 0)
+		DOGW AA 1 A_Chase
+		TNT1 A 0 A_Recoil(-1)
+		TNT1 A 0 A_JumpIfInTargetInventory("IsPlayer", 1, "FollowPlayer")
+		TNT1 A 0 A_JumpIfCloser(200, "Waits")
+		TNT1 A 0 A_CheckSight("CheckIfPlayerSee")
+		Goto See
+
+	FollowPlayer:
+		TNT1 A 0 A_ChangeFlag("FRIENDLY", 0)
+		TNT1 A 0 A_ChangeFlag("FASTER", 1)
+		TNT1 A 0 A_ChangeFlag("SHOOTABLE", 0)
+		TNT1 A 0 A_JumpIfCloser(150, "Waits")
+		TNT1 A 0 A_ChangeFlag("MISSILEMORE", 0)
+		TNT1 A 0 A_ChangeFlag("MISSILEEVENMORE", 0)
+		DOGW A 1 A_Chase
+		TNT1 A 0 A_Recoil(-1)
+		DOGW AA 1 A_Chase
+		TNT1 A 0 A_Recoil(-1)
+		DOGW BB 1 A_Chase
+		TNT1 A 0 A_CheckSight("CheckIfPlayerSee")
+		TNT1 A 0 A_Recoil(-1)
+		DOGW CC 1 A_Chase
+		TNT1 A 0 A_Recoil(-1)
+		DOGW DD 1 A_Chase
+		Goto CheckIfPlayerSee
+
+	CheckIfPlayerSee:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIfInTargetInventory("IsPlayer", 1, "Pathfind")
+		Goto See
+
+	Pathfind:
+		TNT1 A 0 A_ChangeFlag("SHOOTABLE", 0)
+		DOGW AA 1 A_Chase
+		TNT1 A 0 A_JumpIfCloser(200, "Waits")
+		Goto FollowPlayer
+
+	Waits:
+		TNT1 A 0 A_ChangeFlag("SHOOTABLE", 1)
+		DOGS A 0 A_Look
+		TNT1 A 0 A_ChangeFlag("FRIENDLY", 0)
+		TNT1 A 0 A_ChangeFlag("SHOOTABLE", 0)
+		DOGS A 1 A_LookEx(0, 0, 0, 0, 0, "FollowPlayer")
+		TNT1 A 0 A_CheckSight("FollowPlayer")
+		TNT1 A 0 A_ChangeFlag("SHOOTABLE", 1)
+		TNT1 A 0 A_JumpIfCloser(300, "Waits")
+		Goto FollowPlayer
+
+	Missile:
+		TNT1 A 0
+		TNT1 A 0 A_ChangeFlag("NODROPOFF", 1)
+		TNT1 A 0 A_JumpIfInTargetInventory("TargetIsAMarine", 1, "FollowPlayer") // never remove this one
+		TNT1 A 0 A_JumpIfInTargetInventory("IsPlayer", 1, "Waits")
+		TNT1 A 0 A_ChangeFlag("SHOOTABLE", 1)
+		TNT1 A 0 A_ChangeFlag("SOLID", 1)
+		TNT1 A 0 A_JumpIfCloser(200, "ActualFireState")
+		TNT1 A 0 A_FaceTarget
+		DOGS A 1 A_Recoil(-1)
+		TNT1 A 0 A_PlaySound("DogAttack")
+		DOGW AABBCCDD 1 A_Chase
+		TNT1 A 0 A_JumpIfInTargetInventory("IsPlayer", 1, "Waits")
+		Goto See
+
+	ActualFireState:
+		DOGW F 3 A_FaceTarget
+		TNT1 A 0 A_Recoil(-6)
+		TNT1 A 0 ThrustThingZ(0, 35, 0, 1)
+		TNT1 A 0 A_PlaySound("DOGAT4", 3)
+		DOGW EEFF 3 A_MeleeAttack
+		Goto See
+
+	Pain:
+		DOGS A 2
+		TNT1 A 0 A_PlaySound("DogPain")
+		DOGS A 2 A_Pain
+		Goto See+1
+
+	Death:
+		TNT1 A 0
+		TNT1 A 0 A_PlaySound("DOGDIE", 3)
+		DOGW I 4 A_NoBlocking
+		DOGW JKLM 4
+		DOGW M -1
+		Stop
+	}
+}

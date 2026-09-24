@@ -1,0 +1,5 @@
+// Crosshair scanner and sentry bot, adapted from brutal22test6
+// (Sergeant_Mark_IV's Brutal Doom v22).
+
+user bool bd_disablescanner = false; // show name/HP of whatever's under the crosshair
+user int bd_sentrymax = 1;           // max sentry bots deployed at once (0 disables)

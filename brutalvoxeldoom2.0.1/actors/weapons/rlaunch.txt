@@ -1,0 +1,202 @@
+ACTOR Rlauncher : ModWeapon replaces RocketLauncher
+{
+	Weapon.SelectionOrder 5000
+	Weapon.SlotNumber 5
+	Weapon.AmmoType "RocketMag"
+	Weapon.AmmoUse 1
+	Weapon.AmmoGive 0
+	Weapon.AmmoType2 "RocketAmmo"
+	Weapon.AmmoUse2 0
+	Weapon.AmmoGive2 5
+	Weapon.UpSound "weapons/rlaunch/equp"
+	Inventory.PickupSound "weapons/rlaunch/pkup"
+	Inventory.PickupMessage "You got the Rocket Launcher!"
+	Tag "Rocket Launcher"
+	+WEAPON.NOALERT
+	+WEAPON.AMMO_OPTIONAL
+	//+WEAPON.NOAUTOFIRE
+	States
+	{
+	Select:
+		TNT1 A 0 A_PlaySound("weapons/rlaunch/raise", CHAN_AUTO)
+		LNCH A 1 A_Raise
+		TNT1 A 0 A_ZoomFactor(1.00)
+		LNCH A 1 A_WeaponOffset(54, 100, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		Goto Ready
+	Deselect:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_AnimToggle")==1, "DeadSelect")
+		TNT1 A 0 A_PlaySound("weapons/rlaunch/dslct", CHAN_AUTO)
+		TNT1 A 0 A_PlaySound("weapons/deselect", CHAN_AUTO)
+		LNCH A 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(54, 100, WOF_INTERPOLATE)
+		LNCH A 1 A_Lower
+		Wait
+	DeadSelect:
+		TNT1 A 0 A_JumpIfHealthLower(1, "Dead")
+		Goto Deselect+1
+	Dead:
+		TNT1 A 0 
+	Anim:
+		GRAB ABCD 2
+		TNT1 A 0 A_FireProjectile("DitchedRL", 0, 0, 0, 13)
+		GRAB EF 2
+		GRAB GHI 3
+	Stopped:
+		TNT1 A 1
+		Loop
+	Ready:
+		TNT1 A 0 A_ClearRefire
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		LNCH A 1 A_WeaponReady(WRF_ALLOWRELOAD)
+		Loop
+	Fire:
+		TNT1 A 0 A_JumpIfNoAmmo("Reload")
+		TNT1 A 0 A_GunFlash
+		TNT1 A 0 A_PlaySound("weapons/rocket/fire", CHAN_WEAPON)
+		TNT1 A 0 A_TakeInventory("RocketMag", 1, TIF_NOTAKEINFINITE)
+		TNT1 A 0 A_AlertMonsters
+		TNT1 A 0 A_ZoomFactor(0.985, ZOOM_INSTANT)
+		TNT1 A 0 A_FireProjectile("Rocket", 0, 0, 0, 5)
+		LNFI A 1 Bright A_SetPitch(pitch-0.75)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner",0, 0, 0, -2)
+		TNT1 A 0 A_ZoomFactor(0.99)
+		LNFI A 1 Bright A_SetPitch(pitch-0.5)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner",0, 0, 0, -2)
+		TNT1 A 0 A_ZoomFactor(0.992)
+		LNFI B 1 BRIGHT A_WeaponOffset(0, 41, WOF_INTERPOLATE)
+		TNT1 AA 0 A_FireProjectile("GunSmokeSpawner",0, 0, 0, -4)
+		TNT1 A 0 A_SetPitch(pitch-0.25)
+		TNT1 A 0 A_ZoomFactor(0.994)
+		LNFI C 1 BRIGHT A_WeaponOffset(0, 37, WOF_INTERPOLATE)
+		TNT1 AA 0 A_FireProjectile("GunSmokeSpawner",0, 0, 0, -6)
+		TNT1 A 0 A_SetPitch(pitch+0.5)
+		TNT1 A 0 A_ZoomFactor(0.996)
+		LNFI D 1 BRIGHT A_WeaponOffset(0, 35, WOF_INTERPOLATE)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner",0, 0, 0, -8)
+		TNT1 A 0 A_SetPitch(pitch+0.25)
+		TNT1 A 0 A_ZoomFactor(0.998)
+		LNCH B 1 A_SetPitch(pitch+0.25)
+		TNT1 A 0 A_ZoomFactor(1.00)
+		LNCH B 1 A_SetPitch(pitch+0.125)
+		LNCH A 1 A_Weaponoffset(0,37, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.125)
+		LNCH A 1 A_Weaponoffset(0,35, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.125)
+		TNT1 A 0 A_PlaySound("weapons/rocket/cycle")
+		LNFI E 1 A_SetPitch(pitch+0.0625)
+		LNFI F 1 A_SetPitch(pitch+0.0625)
+		LNFI G 1 
+		LNCH AA 1 
+		TNT1 A 0 A_Refire
+		Goto Ready
+	AltFire:
+		TNT1 A 0 A_JumpIfInventory("RocketMag", 1, 1)
+		Goto Reload
+		TNT1 A 0 A_PlaySound("weapons/grenade/fire", CHAN_WEAPON)
+		TNT1 A 0 A_TakeInventory("RocketMag", 1, TIF_NOTAKEINFINITE)
+		TNT1 A 0 A_AlertMonsters
+		TNT1 A 0 A_ZoomFactor(0.99, ZOOM_INSTANT)
+		TNT1 A 0 A_FireProjectile("Grenade2", 0, 0, 0, 5)
+		LNCH B 1 A_SetPitch(pitch-0.75)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner",0, 0, 0, -2)
+		TNT1 A 0 A_ZoomFactor(0.992)
+		LNCH B 1 A_SetPitch(pitch-0.5)
+		TNT1 A 0 A_FireProjectile("PistolSmokeSpawner",0, 0, 0, -2)
+		TNT1 A 0 A_ZoomFactor(0.994)
+		LNCH B 1 A_WeaponOffset(0, 41, WOF_INTERPOLATE)
+		TNT1 AA 0 A_FireProjectile("PistolSmokeSpawner",0, 0, 0, -4)
+		TNT1 A 0 A_SetPitch(pitch+0.25)
+		TNT1 A 0 A_ZoomFactor(0.996)
+		LNCH B 1 A_WeaponOffset(0, 37, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.25)
+		TNT1 A 0 A_ZoomFactor(0.998)
+		LNCH B 1 A_WeaponOffset(0, 35, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.25)
+		TNT1 A 0 A_ZoomFactor(1.00)
+		LNCH B 1 A_SetPitch(pitch+0.125)
+		LNCH B 1 A_SetPitch(pitch+0.125)
+		LNCH A 1 A_Weaponoffset(0,37, WOF_INTERPOLATE)
+		LNCH A 1 A_SetPitch(pitch+0.125)
+		TNT1 A 0 A_Weaponoffset(0,35, WOF_INTERPOLATE)
+		TNT1 A 0 A_PlaySound("weapons/rocket/cycle")
+		LNFI E 1 A_SetPitch(pitch+0.0625)
+		LNFI F 1 A_SetPitch(pitch+0.0625)
+		LNFI GGG 1 
+		LNCH A 4 
+		TNT1 A 0 A_Refire
+		Goto Ready
+	Reload:
+		TNT1 A 0 A_JumpIfInventory("RocketMag", 5, 2)
+		TNT1 A 0 A_JumpIfInventory("RocketAmmo", 1, "ReloadWork")
+		LNCH A 1 A_WeaponReady
+		Goto Ready
+	ReloadWork:
+		TNT1 A 0 A_ClearReFire
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_ToggleRL")==0, "NoReloadLoop")
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		LODE ABCDE 2 
+		TNT1 A 0 A_PlaySound("weapons/rocket/out")
+		TNT1 A 0 A_FireProjectile("RocketPackDrop",-5,0,-2,-10)
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		LODE FGHIJKLMN 2 
+	ReloadLoop:
+		TNT1 A 0 A_TakeInventory("RocketAmmo", 1)
+		TNT1 A 0 A_GiveInventory("RocketMag", 1)
+		TNT1 A 0 A_JumpIfInventory("RocketMag", 5, "ReloadFinish")
+		TNT1 A 0 A_JumpIfInventory("RocketAmmo", 1, "ReloadLoop")
+		Goto ReloadFinish
+	NoReloadLoop:
+		TNT1 A 0 A_TakeInventory("RocketAmmo", 1)
+		TNT1 A 0 A_GiveInventory("RocketMag", 1)
+		TNT1 A 0 A_JumpIfInventory("RocketMag", 5, "NoReloadFinish")
+		TNT1 A 0 A_JumpIfInventory("RocketAmmo", 1, "NoReloadLoop")
+		Goto NoReloadFinish
+	ReloadFinish:
+		TNT1 A 0 A_ClearRefire
+		TNT1 A 0 A_PlaySound("weapons/rocket/in")
+		LODE OPQ 2 
+		TNT1 A 0 A_PlaySound("weapons/rocket/cycle")
+		LODE RST 2 
+		Goto Ready
+	NoReloadFinish:
+		TNT1 A 0 A_ReFire
+		Goto Ready
+	DoPunch:
+		TNT1 A 0 A_PlaySound("weapons/deselect", CHAN_AUTO)
+		TNT1 A 0 A_TakeInventory("Punching",1)
+		LNCH A 1 A_WeaponOffset(-5,35, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-40,52, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-49,75, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-51,90, WOF_INTERPOLATE)
+		TNT1 A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		TNT1 A 0 A_PlaySound("swing")
+		Goto ActualPunch
+	PunchDone:
+		TNT1 A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-75,69, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-60,60, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-45,52, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(-15,39, WOF_INTERPOLATE)
+		LNCH A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		Goto Ready
+	Flash:
+		TNT1 A 1 A_Light2
+		TNT1 A 1 A_Light1
+		Goto LightDone
+	Spawn:
+		LAWN A -1
+		Stop
+	}
+}

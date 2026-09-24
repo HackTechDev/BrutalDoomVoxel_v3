@@ -1,0 +1,8 @@
+// Sprint, mantling and boss health bar, adapted from brutal22test6
+// (Sergeant_Mark_IV's Brutal Doom v22). See zscript/BD_Movement.zc and
+// zscript/BD_BossHealth.zc for what was simplified vs. the original.
+
+user bool bd_enablesprint = true;   // hold +speed while moving to run faster
+user bool bd_infinitesprint = false; // sprint without a stamina limit
+user bool bd_mantling = true;        // auto climb onto chest/head-height ledges
+user bool bd_bosshealthbar = true;   // show HP for nearby +BOSS monsters

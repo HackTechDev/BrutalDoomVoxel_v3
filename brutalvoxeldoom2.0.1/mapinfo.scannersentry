@@ -1,0 +1,6 @@
+// Registers the scanner and sentry bot handlers. Additive: AddEventHandlers
+// appends to the list already declared in mapinfo.lmp.
+GameInfo
+{
+	AddEventHandlers = "BDScannerHandler", "BDSentrybotHandler"
+}

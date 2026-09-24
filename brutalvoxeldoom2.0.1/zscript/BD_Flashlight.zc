@@ -1,0 +1,291 @@
+//===========================================================================
+//
+// Flashlight, adapted from brutal22test6 (Sergeant_Mark_IV's Brutal Doom v22).
+//
+// The original is a BCS/ACS system (src/flashlightenable.acs, flashlightshow.acs)
+// built on Brutal Doom's own network-sync and logging framework, compiled with the
+// BCC toolchain. This pack's ACS is plain acc and has none of that framework, so
+// the toggle and the per-tic beam are reimplemented here in ZScript instead:
+//   - the on/off state (and, if cl_bd_flashlightbattery is on, a charge level) live
+//     on an Inventory item the player always carries (BDFlashlightBattery), which
+//     GZDoom already replicates, so no custom network sync code is needed;
+//   - the beam is one LineTrace per tic (not the original's unit-by-unit hitscan
+//     march), with a chain of short-lived point lights spaced along it.
+// Not ported: Brutal Doom's vehicle/demon-player special cases (this pack has no
+// such player classes). Everything else from the original (monster alert, the
+// source glow) is ported; battery, colour and the intensity/range sliders are new,
+// not in brutal22test6.
+//
+//===========================================================================
+
+class BDFlashlightBattery : Inventory
+{
+	double charge; // 0..100, only meaningful while cl_bd_flashlightbattery is on
+	bool on;
+
+	Default
+	{
+		Inventory.MaxAmount 1;
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.UNTOSSABLE
+	}
+
+	const BD_FLASHLIGHT_DRAIN_PER_TIC = 100.0 / (90.0 * 35.0);    // empties in ~90s of use
+	const BD_FLASHLIGHT_RECHARGE_PER_TIC = 100.0 / (45.0 * 35.0); // refills in ~45s off
+
+	override void BeginPlay()
+	{
+		Super.BeginPlay();
+		charge = 100;
+	}
+
+	override void DoEffect()
+	{
+		Super.DoEffect();
+
+		if (!Owner || !Owner.player)
+			return;
+
+		if (!CVar.GetCVar("cl_bd_flashlightbattery", Owner.player).GetBool())
+		{
+			charge = 100; // battery disabled: stay topped up so re-enabling starts full
+			return;
+		}
+
+		if (on)
+		{
+			charge = max(0.0, charge - BD_FLASHLIGHT_DRAIN_PER_TIC);
+			if (charge <= 0.0)
+			{
+				on = false;
+				if (Owner.CheckLocalView())
+					Console.Printf(TEXTCOLOR_ORANGE .. "Flashlight battery depleted.");
+			}
+		}
+		else if (charge < 100.0)
+		{
+			charge = min(100.0, charge + BD_FLASHLIGHT_RECHARGE_PER_TIC);
+		}
+	}
+}
+
+class BDFlashlightHandler : EventHandler
+{
+	const BD_FLASHLIGHT_STEP = 24.0;
+	const BD_FLASHLIGHT_MAXLIGHTS = 40; // safety cap; cl_bd_flashlightrange 960 / STEP 24 = 40
+	const BD_FLASHLIGHT_SPREAD = 2.2;   // degrees, for the "wide" beam
+	const BD_FLASHLIGHT_ALERTDIST = 384.0;
+
+	static BDFlashlightBattery GetOrGiveBattery(PlayerPawn mo)
+	{
+		let batt = BDFlashlightBattery(mo.FindInventory("BDFlashlightBattery"));
+		if (!batt)
+			batt = BDFlashlightBattery(mo.GiveInventoryType("BDFlashlightBattery"));
+		return batt;
+	}
+
+	override void PlayerSpawned(PlayerEvent e)
+	{
+		PlayerPawn mo = players[e.PlayerNumber].mo;
+		if (mo)
+			GetOrGiveBattery(mo);
+	}
+
+	override void WorldThingDied(WorldEvent e)
+	{
+		// Can't hold a lit torch while dead; also stops a stale beam surviving respawn.
+		if (e.Thing && e.Thing.player)
+		{
+			let batt = BDFlashlightBattery(e.Thing.FindInventory("BDFlashlightBattery"));
+			if (batt)
+				batt.on = false;
+		}
+	}
+
+	override void NetworkProcess(ConsoleEvent e)
+	{
+		if (e.Name != "BDToggleFlashlight" || e.Player < 0 || !playeringame[e.Player])
+			return;
+
+		PlayerPawn mo = players[e.Player].mo;
+		if (!mo)
+			return;
+
+		let batt = GetOrGiveBattery(mo);
+		bool wasOn = batt.on;
+
+		if (!wasOn && CVar.GetCVar("cl_bd_flashlightbattery", mo.player).GetBool() && batt.charge <= 0.0)
+		{
+			if (e.Player == consoleplayer)
+				Console.Printf(TEXTCOLOR_ORANGE .. "Flashlight battery is empty.");
+			return;
+		}
+
+		batt.on = !wasOn;
+
+		if (e.Player == consoleplayer)
+			mo.A_StartSound(wasOn ? "FLASHOFF" : "FLASHON", CHAN_AUTO);
+	}
+
+	override void WorldTick()
+	{
+		if (consoleplayer < 0 || !playeringame[consoleplayer])
+			return;
+
+		PlayerInfo viewer = players[consoleplayer];
+		bool hideOthers = CVar.GetCVar("cl_bd_disableflashlight", viewer).GetBool();
+		double maxOtherDist = CVar.GetCVar("cl_bd_maxflashlightdistance", viewer).GetInt();
+		double range = CVar.GetCVar("cl_bd_flashlightrange", viewer).GetInt();
+		int intensity = CVar.GetCVar("cl_bd_flashlightintensity", viewer).GetInt();
+
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!playeringame[i])
+				continue;
+
+			PlayerPawn mo = players[i].mo;
+			if (!mo)
+				continue;
+
+			let batt = BDFlashlightBattery(mo.FindInventory("BDFlashlightBattery"));
+			if (!batt || !batt.on)
+				continue;
+
+			bool isSelf = i == consoleplayer;
+			if (!isSelf)
+			{
+				if (hideOthers)
+					continue;
+				if (mo.Distance3D(players[consoleplayer].mo) > maxOtherDist)
+					continue;
+			}
+
+			int quality = CVar.GetCVar(isSelf ? "cl_bd_flashlighttype" : "cl_bd_otherflashlighttype", viewer).GetInt();
+			if (quality <= 0)
+				continue;
+
+			// Owner-side settings: how THIS player's flashlight behaves/looks, same for
+			// every viewer, as opposed to the viewer-side settings read above.
+			int color = CVar.GetCVar("cl_bd_flashlightcolor", mo.player).GetInt();
+			bool canAlert = isSelf && CVar.GetCVar("cl_bd_flashlightalert", mo.player).GetBool();
+			bool showSource = CVar.GetCVar("cl_bd_flashlightsource", mo.player).GetBool();
+
+			SpawnBeam(mo, 0, 0, range, intensity, color, canAlert);
+			if (quality >= 2)
+			{
+				SpawnBeam(mo, -BD_FLASHLIGHT_SPREAD, 0, range, intensity, color, false);
+				SpawnBeam(mo, BD_FLASHLIGHT_SPREAD, 0, range, intensity, color, false);
+			}
+
+			if (showSource)
+				SpawnSourceGlow(mo);
+		}
+	}
+
+	// Traces one line along the player's aim and drops a short chain of
+	// self-removing point lights (see actors/flashlight_gz.dec) along it,
+	// from the player's eye to whatever the beam hits (or out to "range").
+	// "intensity" shifts which of the ten light tiers get used, brighter
+	// (and bigger) for a positive value, dimmer for a negative one.
+	static void SpawnBeam(PlayerPawn mo, double addAngle, double addPitch, double range, int intensity, int color, bool canAlert)
+	{
+		double angle = mo.Angle + addAngle;
+		double pitch = mo.Pitch + addPitch;
+		double viewheight = mo.player ? mo.player.viewheight : mo.Height * 0.85;
+
+		FLineTraceData trace;
+		bool hit = mo.LineTrace(angle, range, pitch, TRF_THRUACTORS | TRF_THRUSPECIES, viewheight, 0, 0, trace);
+		double dist = hit ? trace.Distance : range;
+		if (dist < BD_FLASHLIGHT_STEP)
+			return;
+
+		// A lit flashlight gives you away, whatever it's pointed at, roughly like the
+		// original's every-tic GiveActorInventory(tid, "FlashlightAlerter3", 1).
+		if (canAlert)
+			mo.A_AlertMonsters(BD_FLASHLIGHT_ALERTDIST);
+
+		double pc = cos(pitch);
+		Vector3 dir = (pc * cos(angle), pc * sin(angle), -sin(pitch));
+		Vector3 start = mo.Pos + (0, 0, viewheight);
+
+		int lights = int(dist / BD_FLASHLIGHT_STEP);
+		if (lights > BD_FLASHLIGHT_MAXLIGHTS)
+			lights = BD_FLASHLIGHT_MAXLIGHTS;
+
+		for (int i = 1; i <= lights; i++)
+		{
+			Vector3 pos = start + dir * (i * BD_FLASHLIGHT_STEP);
+			int tier = 1 + i * 9 / max(1, lights) + intensity;
+			Actor.Spawn(TierClass(tier, color), pos, NO_REPLACE);
+		}
+	}
+
+	// Small additive glow in front of the player, ported from brutal22test6's
+	// FlashlightSource (only ever shown to the flashlight's own owner there too).
+	static void SpawnSourceGlow(PlayerPawn mo)
+	{
+		double viewheight = mo.player ? mo.player.viewheight : mo.Height * 0.85;
+		Vector3 pos = mo.Pos + (cos(mo.Angle) * 24, sin(mo.Angle) * 24, viewheight);
+		Actor.Spawn("BDFlashlightSourceGlow", pos, NO_REPLACE);
+	}
+
+	static class<Actor> TierClass(int tier, int color)
+	{
+		if (color == 1)
+			return TierClassWarm(tier);
+		if (color == 2)
+			return TierClassRed(tier);
+		return TierClassWhite(tier);
+	}
+
+	static class<Actor> TierClassWhite(int tier)
+	{
+		switch (clamp(tier, 1, 10))
+		{
+			case 1: return "FlashLightLight_GZ1";
+			case 2: return "FlashLightLight_GZ2";
+			case 3: return "FlashLightLight_GZ3";
+			case 4: return "FlashLightLight_GZ4";
+			case 5: return "FlashLightLight_GZ5";
+			case 6: return "FlashLightLight_GZ6";
+			case 7: return "FlashLightLight_GZ7";
+			case 8: return "FlashLightLight_GZ8";
+			case 9: return "FlashLightLight_GZ9";
+			default: return "FlashLightLight_GZ10";
+		}
+	}
+
+	static class<Actor> TierClassWarm(int tier)
+	{
+		switch (clamp(tier, 1, 10))
+		{
+			case 1: return "FlashLightLight_GZ1_Warm";
+			case 2: return "FlashLightLight_GZ2_Warm";
+			case 3: return "FlashLightLight_GZ3_Warm";
+			case 4: return "FlashLightLight_GZ4_Warm";
+			case 5: return "FlashLightLight_GZ5_Warm";
+			case 6: return "FlashLightLight_GZ6_Warm";
+			case 7: return "FlashLightLight_GZ7_Warm";
+			case 8: return "FlashLightLight_GZ8_Warm";
+			case 9: return "FlashLightLight_GZ9_Warm";
+			default: return "FlashLightLight_GZ10_Warm";
+		}
+	}
+
+	static class<Actor> TierClassRed(int tier)
+	{
+		switch (clamp(tier, 1, 10))
+		{
+			case 1: return "FlashLightLight_GZ1_Red";
+			case 2: return "FlashLightLight_GZ2_Red";
+			case 3: return "FlashLightLight_GZ3_Red";
+			case 4: return "FlashLightLight_GZ4_Red";
+			case 5: return "FlashLightLight_GZ5_Red";
+			case 6: return "FlashLightLight_GZ6_Red";
+			case 7: return "FlashLightLight_GZ7_Red";
+			case 8: return "FlashLightLight_GZ8_Red";
+			case 9: return "FlashLightLight_GZ9_Red";
+			default: return "FlashLightLight_GZ10_Red";
+		}
+	}
+}

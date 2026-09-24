@@ -1,0 +1,149 @@
+actor DoomGuy : DoomPlayer
+{
+   Player.StartItem "Beretta"
+   Player.StartItem "Knuckle"
+   Player.StartItem "9mmAmmo", 50
+   Player.StartItem "PistolMag", 10
+   Player.StartItem "ShotgunMag", 8
+   Player.StartItem "DBSGMag", 2
+   Player.StartItem "RifleMag", 30
+   Player.StartItem "MinigunMag", 150
+   Player.StartItem "RocketMag", 5
+   Player.StartItem "PlasmaMag", 60
+   Player.StartItem "BFGMag", 160
+   Player.CrouchSprite "PLYC"
+   Player.DisplayName "DoomGuy"
+   Player.JumpZ "8.01"
+   Player.ViewHeight "41.5"
+   States
+   {
+	Spawn:
+	PLAY F 0 A_JumpIf (momZ != 0, "Jumpin")
+    PLAY A 1
+    Loop
+  See:
+	PLAY A 0 A_JumpIf (momZ != 0, "Jumpin")
+    PLAY A 4
+	PLAY B 0 A_JumpIf (momZ != 0, "Jumpin")
+    PLAY B 4 
+	PLAY C 0 A_JumpIf (momZ != 0, "Jumpin")
+    PLAY C 4 
+	PLAY D 0 A_JumpIf (momZ != 0, "Jumpin")
+    PLAY D 4 
+    Loop
+  Missile:
+	PLAY F 0 A_JumpIf (momZ != 0, "Jumpin")
+    PLAY E 12
+    Goto Spawn
+	JumpMelee:
+		PLAJ B 3 Bright
+		Goto Jumpin
+	Jumpin:
+		PLAJ A 3 
+		Goto See
+	Melee:
+		PLAY F 0 A_JumpIf (momZ != 0, "JumpMelee")
+		PLAY F 3 Bright
+		Goto Missile
+	Pain:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_FlinchToggle")==0, "Pain_NoPunch")
+		TNT1 A 0 A_JumpIfInventory("BasicArmor", 1, "Pain_Arm")
+		TNT1 A 0 ACS_NamedExecuteAlways("AimPunch",0,900,900,0)
+		TNT1 A 0 A_SetBlend ("20 00 00", 0.7, 6)
+		PLAY G 4 A_Pain
+		Goto Spawn
+	Pain_NoPunch:
+		TNT1 A 0 A_JumpIfInventory("BasicArmor", 1, "Pain_Arm")
+		TNT1 A 0 A_SetBlend ("20 00 00", 0,7, 6)
+		PLAY G 4 A_Pain
+		Goto Spawn
+	Pain_NoSparks:
+		TNT1 A 0 A_SetBlend ("20 00 00", 0,7, 6)
+		PLAY G 4 A_Pain
+		Goto Spawn
+	Pain_Arm:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_ArmorToggle")==0, "Pain_NoSparks")
+		TNT1 A 0 A_PlaySound("player/armorhit")
+		TNT1 AAAAAAAAAA 0 A_SpawnItemEx("BulletArmorSpark",0,0,32,frandom(-2.0,2.0),frandom(-2.0,2.0),frandom(3.0,6.0),frandom(0.0,359.9),SXF_NOCHECKPOSITION)
+		TNT1 A 0 A_SetBlend ("20 00 00", 0.7, 6)
+		PLAY G 4 A_Pain
+		Goto Spawn
+	}
+}
+
+ACTOR PistolMag : Ammo
+{
+	Inventory.Amount 0
+	Inventory.MaxAmount 11
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 11
+	+IGNORESKILL
+}
+
+ACTOR RifleMag : Ammo
+{
+	Inventory.Amount 0
+	Inventory.MaxAmount 31
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 31
+	+IGNORESKILL
+}
+
+ACTOR ShotgunMag : Ammo
+{
+	Inventory.Amount 0
+	Inventory.MaxAmount 8
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 8
+	+IGNORESKILL
+}
+
+ACTOR DBSGMag : Ammo
+{
+	Inventory.Amount 0
+	Inventory.MaxAmount 2
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 2
+	+IGNORESKILL
+}
+
+ACTOR MinigunMag : Ammo
+{
+	Inventory.Amount 0
+	Inventory.MaxAmount 150
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 150
+	+IGNORESKILL
+}
+
+ACTOR RocketMag : Ammo
+{
+	Inventory.Amount 0
+	Inventory.MaxAmount 5
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 5
+	+IGNORESKILL
+}
+
+ACTOR PlasmaMag : Ammo
+{
+	Inventory.Amount 0
+	Inventory.MaxAmount 60
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 60
+	+IGNORESKILL
+}
+
+ACTOR BFGMag : Ammo
+{
+	Inventory.Amount 0
+	Inventory.MaxAmount 160
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 160
+	+IGNORESKILL
+}
+
+Actor Punching : Inventory
+{
+inventory.maxamount 1
+}

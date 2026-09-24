@@ -1,0 +1,219 @@
+ACTOR BFG9K : ModWeapon replaces BFG9000
+{
+	Weapon.SelectionOrder 7000
+	Weapon.SlotNumber 7
+	Weapon.AmmoType "BFGMag"
+	Weapon.AmmoUse 40
+	Weapon.AmmoGive 0
+	Weapon.AmmoType2 "Cell"
+	Weapon.AmmoGive2 40
+	Weapon.AmmoUse2 0
+	Weapon.UpSound "weapons/plsweps/upsnd"
+	Inventory.PickupMessage "You got the BFG 9000! Hell yes!"
+	Inventory.PickupSound "weapons/bfg/pickup"
+	Tag "BFG"
+	+WEAPON.NOALERT
+	+WEAPON.AMMO_OPTIONAL
+	//+WEAPON.NOAUTOFIRE
+	States
+	{
+	Select:
+		TNT1 A 0 A_PlaySound("weapons/bfg/equp", CHAN_AUTO)
+		LBFG A 1 A_Raise 
+		LBFG A 1 A_Raise
+		TNT1 A 0 A_ZoomFactor(1.00)
+		TNT1 A 1 A_WeaponOffset(54, 100, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		Goto Ready
+	Deselect:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_AnimToggle")==1, "DeadSelect")
+		TNT1 A 0 A_PlaySound("weapons/plasma/paway", CHAN_AUTO)
+		TNT1 A 0 A_PlaySound("weapons/deselect", CHAN_AUTO)
+		LBFG A 1 A_WeaponOffset(2, 34, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(7, 39, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(10, 47, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(22, 58, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(32, 69, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(54, 100, WOF_INTERPOLATE)
+		LBFG A 1 A_Lower
+		Wait
+	DeadSelect:
+		TNT1 A 0 A_JumpIfHealthLower(1, "Dead")
+		Goto Deselect+1
+	Dead:
+		TNT1 A 0 
+	Anim:
+		GRAB ABCD 2
+		TNT1 A 0 A_FireProjectile("DitchedBFG", 0, 0, 0, 13)
+		GRAB EF 2
+		GRAB GHI 3
+	Stopped:
+		TNT1 A 1
+		Loop
+	Ready:
+		TNT1 A 0 A_JumpIfInventory("Punching", 1, "DoPunch")
+		LBFG A 1 A_WeaponReady(WRF_ALLOWRELOAD)
+		Loop
+	Fire:
+		TNT1 A 0 A_JumpIfNoAmmo("Reload")
+		LBFG A 0 A_PlaySound("weapons/bfg/charge", CHAN_AUTO)
+		LBFG A 0 A_PlaySound("weapons/bfg/ochrg", CHAN_AUTO)
+		LBFG B 1 A_WeaponOffset(1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(-1,32, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(-1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,32, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(-1,32, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(-1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,32, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(-1,32, WOF_INTERPOLATE)
+		TNT1 A 0 A_PlaySound("weapons/bfg/prefir", CHAN_AUTO)
+		LBFG B 1 A_WeaponOffset(-1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,32, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(-1,32, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(-1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,32, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(-1,32, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(-1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,32, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(1,34, WOF_INTERPOLATE)
+		LBFG B 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		TNT1 A 0 A_GunFlash
+		TNT1 A 0 A_ZoomFactor(0.96, ZOOM_INSTANT)
+		TNT1 A 0 A_AlertMonsters
+		TNT1 A 0 A_PlaySound("weapons/bfg/fire", CHAN_WEAPON)
+		TNT1 A 0 A_SetBlend("00 FF 00" , GetCvar("led_BFGFirFlsh"), 16)
+		TNT1 A 0 A_FireProjectile("BFGBall", 0, 1)
+		TNT1 A 0 A_Recoil(7.5)
+		BFGN A 1 A_WeaponOffset(0,37, WOF_INTERPOLATE)
+		TNT1 A 0 A_ZoomFactor(0.965)
+		BFGN A 1 A_WeaponOffset(0,41, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch-0.4)
+		TNT1 A 0 A_ZoomFactor(0.97)
+		BFGN A 1 A_WeaponOffset(0,45, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch-0.4)
+		TNT1 A 0 A_ZoomFactor(0.975)
+		BFGN A 1 A_WeaponOffset(0,51, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch-0.4)
+		TNT1 A 0 A_ZoomFactor(0.98)
+		BFGN A 1 A_WeaponOffset(0,55, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch-0.4)
+		TNT1 A 0 A_ZoomFactor(0.985)
+		BFGN A 1 A_WeaponOffset(0,57, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch-0.4)
+		TNT1 A 0 A_ZoomFactor(0.99)
+		BFGN A 1 A_WeaponOffset(0,59, WOF_INTERPOLATE)
+		TNT1 A 0 A_ZoomFactor(0.992)
+		BFGN A 1 A_WeaponOffset(0,62, WOF_INTERPOLATE)
+		TNT1 A 0 A_ZoomFactor(0.994)
+		BFGN A 1 A_WeaponOffset(0,61, WOF_INTERPOLATE)
+		TNT1 A 0 A_ZoomFactor(0.996)
+		BFGN A 1 A_WeaponOffset(0,59, WOF_INTERPOLATE)
+		TNT1 A 0 A_ZoomFactor(0.998)
+		TNT1 A 0 A_SetPitch(pitch+0.2)
+		BFGN A 1 A_WeaponOffset(0,58, WOF_INTERPOLATE)
+		TNT1 A 0 A_ZoomFactor(1.00)
+		TNT1 A 0 A_SetPitch(pitch+0.2)
+		BFGN A 1 A_WeaponOffset(0,57, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.2)
+		BFGN A 1 A_WeaponOffset(0,55, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.2)
+		BFGN A 1 A_WeaponOffset(0,52, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.2)
+		BFGN A 1 A_WeaponOffset(0,49, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.2)
+		BFGN A 1 A_WeaponOffset(0,47, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.2)
+		BFGN A 1 A_WeaponOffset(0,45, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.2)
+		BFGN A 1 A_WeaponOffset(0,43, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.2)
+		BFGN A 1 A_WeaponOffset(0,41, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.1)
+		BFGN A 1 A_WeaponOffset(0,38, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(0,36, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.05)
+		LBFG A 1 A_WeaponOffset(0,34, WOF_INTERPOLATE)
+		TNT1 A 0 A_SetPitch(pitch+0.05)
+		LBFG A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		LBFG A 21 
+		TNT1 A 0 A_Refire
+		Goto Ready
+	Reload:
+		TNT1 A 0 A_JumpIfInventory("BFGMag", 160, 2)
+		TNT1 A 0 A_JumpIfInventory("Cell", 1, "ReloadWork")
+		LBFG A 1 A_WeaponReady
+		Goto Ready
+	ReloadWork:
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("led_ToggleBFG")==0, "NoReloadLoop")
+		TNT1 A 0 A_PlaySound("weapons/bfg/open")
+		BFGO FEDCBA 1 
+		TNT1 A 0 A_PlaySound("weapons/bfg/clipout")
+		BFGE ABCDEFG 1 
+		TNT1 A 0 A_FireProjectile("PulseCellDrop",45,0,0,-15)
+		BFGO A 5 
+		TNT1 A 0 A_PlaySound("weapons/foley", CHAN_AUTO)
+		BFGR ABCDEFG 1 
+	ReloadLoop:
+		TNT1 A 0 A_TakeInventory("Cell", 1)
+		TNT1 A 0 A_GiveInventory("BFGMag", 1)
+		TNT1 A 0 A_JumpIfInventory("BFGMag", 160, "ReloadFinish")
+		TNT1 A 0 A_JumpIfInventory("Cell", 1, "ReloadLoop")
+		Goto ReloadFinish
+	NoReloadLoop:
+		TNT1 A 0 A_TakeInventory("Cell", 1)
+		TNT1 A 0 A_GiveInventory("BFGMag", 1)
+		TNT1 A 0 A_JumpIfInventory("BFGMag", 160, "NoReloadFinish")
+		TNT1 A 0 A_JumpIfInventory("Cell", 1, "NoReloadLoop")
+		Goto NoReloadFinish
+	ReloadFinish:
+		TNT1 A 0 A_PlaySound("items/cellb", CHAN_AUTO)
+		BFGR H 4 
+		BFGR IJKLM 2 
+		TNT1 A 0 A_PlaySound("weapons/bfg/close")
+		BFGO ABCDEF 1 
+		Goto Ready
+	NoReloadFinish:
+		TNT1 A 0 A_ReFire
+		Goto Ready
+	DoPunch:
+		TNT1 A 0 A_PlaySound("weapons/deselect", CHAN_AUTO)
+		TNT1 A 0 A_TakeInventory("Punching",1)
+		LBFG A 1 A_WeaponOffset(-5,35, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-40,52, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-49,75, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-51,90, WOF_INTERPOLATE)
+		TNT1 A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		TNT1 A 0 A_PlaySound("swing")
+		Goto ActualPunch
+	PunchDone:
+		TNT1 A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-90,79, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-75,69, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-60,60, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-45,52, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-30,45, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(-15,39, WOF_INTERPOLATE)
+		LBFG A 1 A_WeaponOffset(0,32, WOF_INTERPOLATE)
+		Goto Ready
+	Flash:
+		//BFGW A 2 bright
+    	BFGX HGFE 1 bright A_Light2
+		BFGX DCBA 1 bright A_Light1
+		TNT1 A 0 A_Light0
+    	BFGY ABCDE 1 bright
+		BFGY FGHIJKL 1
+    	Goto LightDone
+	Spawn:
+		BFUG A -1
+		Stop
+	}
+}
