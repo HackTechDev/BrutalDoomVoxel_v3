@@ -4,15 +4,19 @@ Notes d'utilisation pour les mods et l'installation UZDoom de ce dépôt.
 
 ## Construire le pk3 (`brutalvoxeldoom2.0.1`)
 
-Sous Windows, lancer `brutalvoxeldoom2.0.1\build_pk3.bat` (nécessite 7-Zip). Le fichier
-produit est déposé sur le Bureau, nommé `BrutalDoomVoxel_<JJMM>_v3.pk3` d'après la date du
-jour (ex. `BrutalDoomVoxel_2609_v3.pk3` pour le 26 septembre) — le nom change donc à chaque
-build.
+Sous Ubuntu, lancer :
+```
+brutalvoxeldoom2.0.1/build_pk3.sh
+```
+Ce script zippe le contenu de `brutalvoxeldoom2.0.1/` (avec `7z`, ou `zip` si `7z` est
+absent) et dépose le résultat directement dans le répertoire de l'exécutable UZDoom
+(`/home/util01/JEUX/DOOM/MOTEUR/UZDoom-5.0.0/build/`), nommé `BrutalDoomVoxel_<JJMM>_v3.pk3`
+d'après la date du jour (ex. `BrutalDoomVoxel_2609_v3.pk3` pour le 26 septembre) — le nom
+change donc à chaque build. La commande pour lancer le jeu avec ce pk3 est affichée à la
+fin du script.
 
-Sous Linux, l'équivalent :
-```
-cd brutalvoxeldoom2.0.1 && 7z a -r -tzip -mx9 ../BrutalDoomVoxel_$(date +%d%m)_v3.pk3 '*'
-```
+(`brutalvoxeldoom2.0.1/build_pk3.bat` reste l'équivalent Windows — nécessite 7-Zip, dépose
+le pk3 sur le Bureau — mais n'est pas utilisé sur cette installation.)
 
 ## Supprimer la configuration d'UZDoom
 

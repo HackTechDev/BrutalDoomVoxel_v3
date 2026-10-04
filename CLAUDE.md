@@ -13,7 +13,7 @@ Because they are different generations of the same mod, they define overlapping 
 
 ## Build / compile
 
-- **Voxel pack pk3**: `brutalvoxeldoom2.0.1/build_pk3.bat` (Windows, needs 7-Zip) zips everything into `BrutalDoomVoxel_<DDMM>_v3.pk3` (build date, e.g. `BrutalDoomVoxel_2609_v3.pk3` for Sept 26) and copies it to the Desktop. On Linux the equivalent is `cd brutalvoxeldoom2.0.1 && 7z a -r -tzip -mx9 ../BrutalDoomVoxel_$(date +%d%m)_v3.pk3 '*'` (or `zip -r`).
+- **Voxel pack pk3**: this repo runs on Ubuntu, so use `brutalvoxeldoom2.0.1/build_pk3.sh` — zips `brutalvoxeldoom2.0.1/` with `7z` (falls back to `zip`) into `BrutalDoomVoxel_<DDMM>_v3.pk3` (build date, e.g. `BrutalDoomVoxel_2609_v3.pk3` for Sept 26 — the name changes every build) and drops it straight into the UZDoom build directory, `/home/util01/JEUX/DOOM/MOTEUR/UZDoom-5.0.0/build/`, printing the launch command at the end. `brutalvoxeldoom2.0.1/build_pk3.bat` is the original Windows equivalent (needs 7-Zip, copies to the Desktop instead) but isn't used on this machine.
 - **Brutal Doom ACS** is compiled, and the compiled output is committed alongside the source:
   - Sources: `brutal22test6/src/*.acs`. Main entry is `src/BD_Main.acs` (`#library "BD_Main"`), which `#include`s all the other `.acs` files "Decorate style" — add new ACS files by including them there. It uses **BCS** (`zcommon.bcs`, `libbcs.bcs`, `bcsfmt.acs`, `BCSFunc.acs`), so it needs the BCC/bcc-compatible compiler toolchain, not stock acc.
   - Output: `brutal22test6/acs/BD_Main.o` (plus `BD_Hash.o`, `zancmpat.o`). Which libraries load is listed in `LOADACS.txt` (`BD_Main`, `BD_Hash`, and a long commented list of legacy modules — `acs/acs_archive/` and `src/src_archive/` hold old/retired versions, not live code).
